@@ -4,6 +4,59 @@ author: "Tymur Tkachenko, Rohen Giralt, Kaeshev Alapati"
 date: "2022-11-16"
 output: html_document
 ---
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap" rel="stylesheet">
+<title>Online HTML Editor</title>
+</head>
+<body>
+<h1>Online HTML Editor</h1>
+<div>This is real time online HTML Editor</div>
+
+<style>
+  .section-header {
+      display: grid;
+  }
+  .section-header-box {
+      
+      grid-column: 1;
+      grid-row: 1;
+    background-color: #b1d235;
+    padding: .1em;
+    font-size: 1em;
+    align: center;
+    margin: 3em 8em;
+    text-align: center;
+    font-family: "Bree Serif";
+    color: white;
+  }
+  
+  .section-header-line {
+    background-color: black;
+    padding: .1em;
+    margin: 3em 8em;
+    grid-column: 1;
+      grid-row: 1;
+      color:red;
+  }
+  
+</style>
+<div class="section-header">
+<div class="section-header-box">
+    <h1>Section 1</h1>
+</div>
+
+</div class="section-header-line">
+    <h1>asdf</h1>
+    
+</div>
+</div>
+
+</body>
+</html>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
