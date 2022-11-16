@@ -10,10 +10,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r message=FALSE, warning=FALSE}
-library("tidyverse")
+library(tidyverse)
+library(ggplot2)
+library(knittr)
 ```
 
 Reading in the data
 ```{r message=FALSE, warning=FALSE}
-mort = read_csv("mortgages.csv")
+data <- read_csv("data/deaths.csv")
 ```
