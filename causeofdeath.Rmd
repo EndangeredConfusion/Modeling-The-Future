@@ -19,3 +19,13 @@ Reading in the data
 ```{r message=FALSE, warning=FALSE}
 data <- read_csv("data/deaths.csv")
 ```
+
+# Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
+
+# Describe in no more than a few sentences an example of how insurance may be used to help mitigate or manage the losses you noted in question 1.
+
+# Describe in no more than a few sentences an example of how implementing new policies, procedures, or systems to help change behaviors of those involved to help mitigate or manage the losses you noted in this scenario.
+
+# Describe in no more than a few sentences an example of how those involved in the scenario may be able to help modify the possible outcomes to help mitigate or manage the losses you noted.
+
+
