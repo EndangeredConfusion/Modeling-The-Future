@@ -1,0 +1,19 @@
+---
+title: "Cause of Death"
+author: "Tymur Tkachenko, Rohen Giralt, Kaeshev Alapati"
+date: "2022-11-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+```
+
+Reading in the data
+```{r message=FALSE, warning=FALSE}
+mort = read_csv("mortgages.csv")
+```
