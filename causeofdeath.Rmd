@@ -19,13 +19,36 @@ Reading in the data
 ```{r message=FALSE, warning=FALSE}
 data <- read_csv("data/deaths.csv")
 ```
+# Part 1
 
-# Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
+## 1. Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
 
-# Describe in no more than a few sentences an example of how insurance may be used to help mitigate or manage the losses you noted in question 1.
+## 2. Describe in no more than a few sentences an example of how insurance may be used to help mitigate or manage the losses you noted in question 1.
 
-# Describe in no more than a few sentences an example of how implementing new policies, procedures, or systems to help change behaviors of those involved to help mitigate or manage the losses you noted in this scenario.
+## 3. Describe in no more than a few sentences an example of how implementing new policies, procedures, or systems to help change behaviors of those involved to help mitigate or manage the losses you noted in this scenario.
 
-# Describe in no more than a few sentences an example of how those involved in the scenario may be able to help modify the possible outcomes to help mitigate or manage the losses you noted.
+## 4. Describe in no more than a few sentences an example of how those involved in the scenario may be able to help modify the possible outcomes to help mitigate or manage the losses you noted.
 
+# Part 2
 
+## 5. Based on the five categories outlined in the Actuarial Process Guide, what category (or categories) do you classify the attached dataset into? Provide a rationale for your reasoning.
+
+## 6. Based on your answer to the previous question, identify one limitation there is on the types of questions or analysis that you can perform on the data?
+
+## 7. Beyond the data provided in the attached spreadsheet, identify one other type of data or piece of information that could be valuable in analyzing the risks associated with evaluating cause of death and evaluation of impact of policy programs?
+
+## 8. The researcher compiling this dataset compared select causes of death after pulling the raw data to the numbers from the last dataset published from the CDC for 1999-2017. The researcher compared the raw data to the last published dataset to check and see if any cleaning was needed. Use the table below to answer the following questions.
+
+```{r echo=FALSE}
+causes = c("Accidents (unintentional injuries)", 
+           "All Causes",
+           "Alzheimer's disease",
+           "Cerebrovascular diseases",
+           "Chronic lower respiratory diseases",
+           "Diabetes Mellitus",
+           "Diseases of heart",
+           "Influenza and pneumonia",
+           "Intentional self-harm (suicide)",
+           "Malignant neoplasms",
+           "Nephritis, nephrotic syndrome and nephrosis")
+```
