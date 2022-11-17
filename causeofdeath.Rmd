@@ -4,68 +4,59 @@ author: "Tymur Tkachenko, Rohen Giralt, Kaeshev Alapati"
 date: "2022-11-16"
 output: html_document
 ---
+<!DOCTYPE html>
 <html>
-	<head>
-		<style>
-			.section-header {
-				display: grid;
-				margin: auto 5em;
-			}
-			
-			.section-header div {
-				background-color: #b1d235;
-			}
-			
-			.section-header h1 {
-				font-size: 1.8em;
-				font-weight: 100;
-			}
-			
-			.section-header-box {
-				display: flex;
-				justify-content: center;
-				align-content: center;
-				flex-direction: column;
-				grid-column: 1;
-				grid-row: 1;
-				padding: .1em;
-				font-size: 1em;
-				align: center;
-				height: 4.75em;
-				margin: auto;
-				width: 20em;
-				text-align: center;
-				font-family: "Bree Serif";
-				color: white;
-			}
-			
-			.section-header-line {
-				padding: 0em;
-				width: 100%;
-				height: 6px;
-				margin: auto;
-				grid-column: 1;
-				grid-row: 1;
-			}
-            
-            .question {
-                
-            }
-		</style>
-		
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap" rel="stylesheet">
-		<title>Online HTML Editor</title>
-	</head>
-	
-	<body>
-		<div class="section-header">
-			<div class="section-header-line"></div>
-			<div class="section-header-box">
-				<h1>Section 1</h1>
-			</div>
-		</div>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap" rel="stylesheet">
+<title>Online HTML Editor</title>
+</head>
+<body>
+<h1>Online HTML Editor</h1>
+<div>This is real time online HTML Editor</div>
+
+<style>
+  .section-header {
+      display: grid;
+  }
+  .section-header-box {
+      
+      grid-column: 1;
+      grid-row: 1;
+    background-color: #b1d235;
+    padding: .1em;
+    font-size: 1em;
+    align: center;
+    margin: 3em 8em;
+    text-align: center;
+    font-family: "Bree Serif";
+    color: white;
+  }
+  
+  .section-header-line {
+    background-color: black;
+    padding: .1em;
+    margin: 3em 8em;
+    grid-column: 1;
+      grid-row: 1;
+      color:red;
+  }
+  
+</style>
+<div class="section-header">
+<div class="section-header-box">
+    <h1>Section 1</h1>
+</div>
+
+</div class="section-header-line">
+    <h1>asdf</h1>
+    
+</div>
+</div>
+
+</body>
+</html>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -97,6 +88,13 @@ summary(data)
 ```{r}
 head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)/22) %>% arrange(desc(total)), n=10)
 ```
+
+## Question 11
+```{r}
+head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)) %>% arrange(desc(total)), n=10)
+```
+
+None of the leading causes of death change when comparing the average over 22 years and the total. Since each number is changed equally to take the average, the order does not change.
 
 # Part 1
 
@@ -131,7 +129,3 @@ causes = c("Accidents (unintentional injuries)",
            "Malignant neoplasms",
            "Nephritis, nephrotic syndrome and nephrosis")
 ```
-
-        
-	</body>
-</html>
