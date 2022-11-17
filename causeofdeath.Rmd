@@ -65,13 +65,30 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggplot2)
-library(knittr)
+library(knitr)
 ```
 
 Reading in the data
 ```{r message=FALSE, warning=FALSE}
 data <- read_csv("data/deaths.csv")
 ```
+Exploring the data set
+```{r}
+# knitr::kable(data)
+head(data)
+```
+Cleaning up the data
+```{r}
+data = data %>% rename(Cause = `Cause of Death`)
+data$Cause = as.factor(data$Cause)
+data$State = as.factor(data$State)
+summary(data)
+```
+## Question 10
+```{r}
+head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)/22) %>% arrange(desc(total)), n=10)
+```
+
 # Part 1
 
 ## 1. Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
