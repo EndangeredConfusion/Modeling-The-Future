@@ -96,6 +96,13 @@ head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)) %>% arrange(des
 
 None of the leading causes of death change when comparing the average over 22 years and the total. Since each number is changed equally to take the average, the order does not change.
 
+## Question 12
+```{r}
+deaths = sum(data %>% filter(Year == "2015" & Cause == "Influenza and pneumonia (J09-J18)") %>% select(Deaths))
+totalDeaths = sum(data %>% filter(Year == "2015") %>% select(Deaths))
+prob = deaths/totalDeaths
+```
+
 # Part 1
 
 ## 1. Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
