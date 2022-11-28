@@ -131,7 +131,18 @@ The probability of having died of cancer is `r prob`.
 
 ## Question 16
 ```{r}
-topDeaths = data %>% filter(Year == "2015" & Cause == "Influenza and pneumonia (J09-J18)"
+topDeaths = head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)) %>% arrange(desc(total)), n=6)
+ggplot(data = topDeaths, aes(x="", y=total, fill=Cause)) +
+  geom_col(width = 1, color="black") +
+  coord_polar("y", start=0) +
+  theme_void() +
+  geom_text(aes(label = total), position = position_stack(vjust = 0.5))
+```
+
+## Question 17
+```{r}
+topDeaths = head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)) %>% arrange(desc(total)), n=10)
+
 ```
 
 # Part 1
