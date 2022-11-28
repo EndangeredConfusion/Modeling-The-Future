@@ -102,6 +102,37 @@ deaths = sum(data %>% filter(Year == "2015" & Cause == "Influenza and pneumonia 
 totalDeaths = sum(data %>% filter(Year == "2015") %>% select(Deaths))
 prob = deaths/totalDeaths
 ```
+The probability of having Influenze and pneumonia as the cause of death in 2015 is `r prob`.
+
+## Question 13
+```{r}
+data %>% group_by(Year) %>% filter(State == "New York" & Cause == "Chronic lower respiratory diseases (J40-J47)") %>% select(Deaths) %>% arrange(desc(Deaths))
+```
+The most likely year of death is 1999
+```{r}
+deaths = sum(data %>% filter(Year == "1999" & State == "New York" & Cause == "Chronic lower respiratory diseases (J40-J47)") %>% select(Deaths))
+totalDeaths = sum(data %>% filter(State == "New York" & Cause == "Chronic lower respiratory diseases (J40-J47)") %>% select(Deaths))
+prob = deaths/totalDeaths
+```
+The probability of dying in 1999 if the cause of death is chronic lower respiratory diseases and the state is New York is `r prob`.
+
+## Question 14
+```{r}
+deaths = sum(data %>% filter(Cause == "Malignant neoplasms (C00-C97)") %>% select(Deaths))
+totalDeaths = sum(data %>% select(Deaths))
+prob = deaths/totalDeaths
+```
+The probability of having died of cancer is `r prob`.
+
+## Question 15
+```{r}
+
+```
+
+## Question 16
+```{r}
+topDeaths = data %>% filter(Year == "2015" & Cause == "Influenza and pneumonia (J09-J18)"
+```
 
 # Part 1
 
