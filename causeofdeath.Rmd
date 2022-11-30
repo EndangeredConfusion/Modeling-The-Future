@@ -1,82 +1,37 @@
 ---
-title: "Cause of Death"
-author: "Tymur Tkachenko, Rohen Giralt, Kaeshev Alapati"
-date: "2022-11-16"
-output: html_document
+output:
+  html_document:
+    css: styles.css
+    highlight: null
 ---
-<!DOCTYPE html>
-<html>
-    <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap" rel="stylesheet">
-<title>Online HTML Editor</title>
-</head>
-<body>
-<h1>Online HTML Editor</h1>
-<div>This is real time online HTML Editor</div>
-
-<style>
-  .section-header {
-      display: grid;
-  }
-  .section-header-box {
-      
-      grid-column: 1;
-      grid-row: 1;
-    background-color: #b1d235;
-    padding: .1em;
-    font-size: 1em;
-    align: center;
-    margin: 3em 8em;
-    text-align: center;
-    font-family: "Bree Serif";
-    color: white;
-  }
-  
-  .section-header-line {
-    background-color: black;
-    padding: .1em;
-    margin: 3em 8em;
-    grid-column: 1;
-      grid-row: 1;
-      color:red;
-  }
-  
-</style>
+<br>
 <div class="section-header">
-<div class="section-header-box">
-    <h1>Section 1</h1>
+  <div class="section-header-line"></div>
+  <div class="section-header-box"><span class="h1">Modeling the Future Challenge: Cause of Death</span></div>
 </div>
 
-</div class="section-header-line">
-    <h1>asdf</h1>
-    
-</div>
-</div>
-
-</body>
-</html>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
+<br>
+Libraries Needed:
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(knitr)
 ```
-
+<br>
 Reading in the data
 ```{r message=FALSE, warning=FALSE}
 data <- read_csv("data/deaths.csv")
 ```
-Exploring the data set
+<br>
+A brief look at the data set
 ```{r}
-# knitr::kable(data)
-head(data)
+knitr::kable(head(data), format="markdown")
 ```
+<br>
 Cleaning up the data
 ```{r}
 data = data %>% rename(Cause = `Cause of Death`)
@@ -84,6 +39,7 @@ data$Cause = as.factor(data$Cause)
 data$State = as.factor(data$State)
 summary(data)
 ```
+<<<<<<< HEAD
 # Part 1
 
 ## 1. Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
@@ -146,6 +102,13 @@ knitr::kable(table)
 ```
 
 Based on this information, what might have indicated to the researcher in this comparison of the 1999-2017 Last Published dataset and the 1999-2020 Raw Dataset that cleaning of the data was needed?
+=======
+<br>
+<div class="section-header">
+  <div class="section-header-line"> </div>
+  <div class="section-header-box">Part 2</div>
+</div>
+>>>>>>> a2f4686670698c3763b54648930ad299784416f6
 
 ## Question 10
 ```{r}
@@ -165,8 +128,6 @@ deaths = sum(data %>% filter(Year == "2015" & Cause == "Influenza and pneumonia 
 totalDeaths = sum(data %>% filter(Year == "2015") %>% select(Deaths))
 prob = deaths/totalDeaths
 ```
-The probability of having Influenze and pneumonia as the cause of death in 2015 is `r prob`.
-
 ## Question 13
 ```{r}
 data %>% group_by(Year) %>% filter(State == "New York" & Cause == "Chronic lower respiratory diseases (J40-J47)") %>% select(Deaths) %>% arrange(desc(Deaths))
@@ -189,7 +150,6 @@ The probability of having died of cancer is `r prob`.
 
 ## Question 15
 ```{r}
-
 ```
 
 ## Question 16
@@ -205,5 +165,4 @@ ggplot(data = topDeaths, aes(x="", y=total, fill=Cause)) +
 ## Question 17
 ```{r}
 topDeaths = head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)) %>% arrange(desc(total)), n=10)
-
 ```
