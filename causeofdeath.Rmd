@@ -84,6 +84,69 @@ data$Cause = as.factor(data$Cause)
 data$State = as.factor(data$State)
 summary(data)
 ```
+# Part 1
+
+## 1. Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
+
+## 2. Describe in no more than a few sentences an example of how insurance may be used to help mitigate or manage the losses you noted in question 1.
+
+## 3. Describe in no more than a few sentences an example of how implementing new policies, procedures, or systems to help change behaviors of those involved to help mitigate or manage the losses you noted in this scenario.
+
+## 4. Describe in no more than a few sentences an example of how those involved in the scenario may be able to help modify the possible outcomes to help mitigate or manage the losses you noted.
+
+# Part 2
+
+## 5. Based on the five categories outlined in the Actuarial Process Guide, what category (or categories) do you classify the attached dataset into? Provide a rationale for your reasoning.
+
+## 6. Based on your answer to the previous question, identify one limitation there is on the types of questions or analysis that you can perform on the data?
+
+## 7. Beyond the data provided in the attached spreadsheet, identify one other type of data or piece of information that could be valuable in analyzing the risks associated with evaluating cause of death and evaluation of impact of policy programs?
+
+## 8. The researcher compiling this dataset compared select causes of death after pulling the raw data to the numbers from the last dataset published from the CDC for 1999-2017. The researcher compared the raw data to the last published dataset to check and see if any cleaning was needed. Use the table below to answer the following questions.
+
+```{r echo=FALSE}
+selected_causes_of_death = c("Accidents (unintentional injuries)", 
+           "All Causes",
+           "Alzheimer's disease",
+           "Cerebrovascular diseases",
+           "Chronic lower respiratory diseases",
+           "Diabetes Mellitus",
+           "Diseases of heart",
+           "Influenza and pneumonia",
+           "Intentional self-harm (suicide)",
+           "Malignant neoplasms",
+           "Nephritis, nephrotic syndrome and nephrosis")
+last_published = c(4695640,
+                   95457138,
+                   2989632,
+                   5453046,
+                   5189854,
+                   2799886,
+                   24445280,
+                   2189282,
+                   1394032,
+                   21687288,
+                   1717226)
+raw_data = c(2460168,
+             117336580,
+             1710456,
+             2681047,
+             2811355,
+             1312394,
+             12230857,
+             1089286,
+             753901,
+             10817779,
+             797232)
+
+table = data.frame(selected_causes_of_death,
+                   last_published,
+                   raw_data)
+knitr::kable(table)
+```
+
+Based on this information, what might have indicated to the researcher in this comparison of the 1999-2017 Last Published dataset and the 1999-2020 Raw Dataset that cleaning of the data was needed?
+
 ## Question 10
 ```{r}
 head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)/22) %>% arrange(desc(total)), n=10)
@@ -143,38 +206,4 @@ ggplot(data = topDeaths, aes(x="", y=total, fill=Cause)) +
 ```{r}
 topDeaths = head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)) %>% arrange(desc(total)), n=10)
 
-```
-
-# Part 1
-
-## 1. Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
-
-## 2. Describe in no more than a few sentences an example of how insurance may be used to help mitigate or manage the losses you noted in question 1.
-
-## 3. Describe in no more than a few sentences an example of how implementing new policies, procedures, or systems to help change behaviors of those involved to help mitigate or manage the losses you noted in this scenario.
-
-## 4. Describe in no more than a few sentences an example of how those involved in the scenario may be able to help modify the possible outcomes to help mitigate or manage the losses you noted.
-
-# Part 2
-
-## 5. Based on the five categories outlined in the Actuarial Process Guide, what category (or categories) do you classify the attached dataset into? Provide a rationale for your reasoning.
-
-## 6. Based on your answer to the previous question, identify one limitation there is on the types of questions or analysis that you can perform on the data?
-
-## 7. Beyond the data provided in the attached spreadsheet, identify one other type of data or piece of information that could be valuable in analyzing the risks associated with evaluating cause of death and evaluation of impact of policy programs?
-
-## 8. The researcher compiling this dataset compared select causes of death after pulling the raw data to the numbers from the last dataset published from the CDC for 1999-2017. The researcher compared the raw data to the last published dataset to check and see if any cleaning was needed. Use the table below to answer the following questions.
-
-```{r echo=FALSE}
-causes = c("Accidents (unintentional injuries)", 
-           "All Causes",
-           "Alzheimer's disease",
-           "Cerebrovascular diseases",
-           "Chronic lower respiratory diseases",
-           "Diabetes Mellitus",
-           "Diseases of heart",
-           "Influenza and pneumonia",
-           "Intentional self-harm (suicide)",
-           "Malignant neoplasms",
-           "Nephritis, nephrotic syndrome and nephrosis")
 ```
