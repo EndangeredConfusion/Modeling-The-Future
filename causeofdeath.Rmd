@@ -40,25 +40,33 @@ data$State = as.factor(data$State)
 summary(data)
 ```
 <<<<<<< HEAD
-# Part 1
+# Part 1: Problem Definition
 
-## 1. Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
+## 1. 
+Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
 
-## 2. Describe in no more than a few sentences an example of how insurance may be used to help mitigate or manage the losses you noted in question 1.
+## 2. 
+Describe in no more than a few sentences an example of how insurance may be used to help mitigate or manage the losses you noted in question 1.
 
-## 3. Describe in no more than a few sentences an example of how implementing new policies, procedures, or systems to help change behaviors of those involved to help mitigate or manage the losses you noted in this scenario.
+## 3. 
+Describe in no more than a few sentences an example of how implementing new policies, procedures, or systems to help change behaviors of those involved to help mitigate or manage the losses you noted in this scenario.
 
-## 4. Describe in no more than a few sentences an example of how those involved in the scenario may be able to help modify the possible outcomes to help mitigate or manage the losses you noted.
+## 4. 
+Describe in no more than a few sentences an example of how those involved in the scenario may be able to help modify the possible outcomes to help mitigate or manage the losses you noted.
 
-# Part 2
+# Part 2: Data Identification and Analysis
 
-## 5. Based on the five categories outlined in the Actuarial Process Guide, what category (or categories) do you classify the attached dataset into? Provide a rationale for your reasoning.
+## 5. 
+Based on the five categories outlined in the Actuarial Process Guide, what category (or categories) do you classify the attached dataset into? Provide a rationale for your reasoning.
 
-## 6. Based on your answer to the previous question, identify one limitation there is on the types of questions or analysis that you can perform on the data?
+## 6. 
+Based on your answer to the previous question, identify one limitation there is on the types of questions or analysis that you can perform on the data?
 
-## 7. Beyond the data provided in the attached spreadsheet, identify one other type of data or piece of information that could be valuable in analyzing the risks associated with evaluating cause of death and evaluation of impact of policy programs?
+## 7. 
+Beyond the data provided in the attached spreadsheet, identify one other type of data or piece of information that could be valuable in analyzing the risks associated with evaluating cause of death and evaluation of impact of policy programs?
 
-## 8. The researcher compiling this dataset compared select causes of death after pulling the raw data to the numbers from the last dataset published from the CDC for 1999-2017. The researcher compared the raw data to the last published dataset to check and see if any cleaning was needed. Use the table below to answer the following questions.
+## 8. 
+The researcher compiling this dataset compared select causes of death after pulling the raw data to the numbers from the last dataset published from the CDC for 1999-2017. The researcher compared the raw data to the last published dataset to check and see if any cleaning was needed. Use the table below to answer the following questions.
 
 ```{r echo=FALSE}
 selected_causes_of_death = c("Accidents (unintentional injuries)", 
@@ -110,25 +118,34 @@ Based on this information, what might have indicated to the researcher in this c
 </div>
 >>>>>>> a2f4686670698c3763b54648930ad299784416f6
 
-## Question 10
+# Part 3: Mathematical Modeling
+
+## 9.
+The information in the Scenario Introduction describes the % annual reduction in mortality expected for each Of the programs listed - this is an assumption made to simplify the modeling process. How and why might this assumption limit the realism Of modeling and forecasting future impact Of the programs? Describe one way in which easing or revisiting this assumption could lead to an interesting and useful analysis in future years. 
+
+## 10.
+What are the ten leading causes Of death in the US identified in the data from 1999 to 2020 based on average number of deaths per year? Rank the causes in your response and include the totals.
 ```{r}
 head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)/22) %>% arrange(desc(total)), n=10)
 ```
 
-## Question 11
+## 11.
+Do any Of the top ten leading causes Of death change when considering total deaths from 1999 to 2020 instead Of average number of deaths? Explain and justify your answer.
 ```{r}
 head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)) %>% arrange(desc(total)), n=10)
 ```
 
 None of the leading causes of death change when comparing the average over 22 years and the total. Since each number is changed equally to take the average, the order does not change.
 
-## Question 12
+## 12.
+If you choose a person at random from among those who died in 2015, what is the probability he/she has "Influenza and Pneumonia" indicated as the cause Of death?
 ```{r}
 deaths = sum(data %>% filter(Year == "2015" & Cause == "Influenza and pneumonia (J09-J18)") %>% select(Deaths))
 totalDeaths = sum(data %>% filter(Year == "2015") %>% select(Deaths))
 prob = deaths/totalDeaths
 ```
-## Question 13
+## 13.
+If you randomly select a person from New York who died of chronic lower respiratory diseases, in which year was it most likely that he/she died? What is the probability the person died in that year? Explain. 
 ```{r}
 data %>% group_by(Year) %>% filter(State == "New York" & Cause == "Chronic lower respiratory diseases (J40-J47)") %>% select(Deaths) %>% arrange(desc(Deaths))
 ```
@@ -140,7 +157,8 @@ prob = deaths/totalDeaths
 ```
 The probability of dying in 1999 if the cause of death is chronic lower respiratory diseases and the state is New York is `r prob`.
 
-## Question 14
+## 14.
+What is the chance that the cause of death was cancer (ie, malignant neoplasm) for a randomly selected individual in the U.S. from 1999-2020? 
 ```{r}
 deaths = sum(data %>% filter(Cause == "Malignant neoplasms (C00-C97)") %>% select(Deaths))
 totalDeaths = sum(data %>% select(Deaths))
@@ -148,11 +166,14 @@ prob = deaths/totalDeaths
 ```
 The probability of having died of cancer is `r prob`.
 
-## Question 15
+## 15.
+The average cost for end-of-life medical care for a cancer patient in the U.S. is $105,500. 
+What is the expected value of loss in medical costs for an individual who dies of cancer? 
 ```{r}
 ```
 
-## Question 16
+## 16.
+Create a graphical display that best demonstrates the distribution of the six most common causes Of death in 2016. 
 ```{r}
 topDeaths = head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)) %>% arrange(desc(total)), n=6)
 ggplot(data = topDeaths, aes(x="", y=total, fill=Cause)) +
@@ -162,7 +183,42 @@ ggplot(data = topDeaths, aes(x="", y=total, fill=Cause)) +
   geom_text(aes(label = total), position = position_stack(vjust = 0.5))
 ```
 
-## Question 17
+## 17.
+Create a scatter plot or line graph that charts each of the top 10 causes of death over the 1999-2020 time period (total sum of deaths, not average deaths). Offer two observations from the chart about the trends in causes of death. 
 ```{r}
 topDeaths = head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)) %>% arrange(desc(total)), n=10)
 ```
+
+## 18.
+Create a model that uses time to predict the number Of deaths from all causes (consider 1999 as t=O). Give the equation of your model and justify how you chose your model. What might be some limitations or cautions Of using this model to predict future death totals considering the sudden increase in deaths due to the onset of the COVID-19 pandemic? 
+```{r}
+
+```
+
+## 19.
+Since Heart Disease continues to be a leading cause of death in the US, researchers want to predict the number of deaths from itin the future. Use the data to create a model that uses time to predict the number of Heart Disease deaths (consider 1999 as t=O). Give the equation of your model and justify how you chose your model.
+
+## 20.
+Using this model, predict the number Of deaths from heart disease in 2025.
+
+# Part 4: Critical Thinking & Risk Analysis
+
+## 21.
+Using your model created in Question #18, if none of the proposed programs (suicide prevention, opiod, heart disease) are implemented, what is the predicted number Of US deaths in 2025? 
+
+## 22.
+If the suicide prevention program is implemented effectively ONLY (ie, the opioid intervention and heart disease prevention programs are NOT implemented), what is the predicted number of US suicides in 2025?
+
+## 23.
+The Smithsonian quote in the Introduction to this scenario suggests that the rises in suicide and drug overdose are some of the leading causes of the decrease in American life expectancy. Does the data support this contention? Consider the information contained in the table below retrieved from the CDC's WISQARS Leading Causes Of Death Visualization tool along with the data analysis you have already conducted with the 1999-2020 Cause Of Death Dataset in explaining and justifying your answer.
+
+# Part 5: Recommendations
+
+## 24.
+The head of the think tank is able to fundraise up to $100,000,000 for program implementations and wishes to use that money to fund two Of the programs. If all monies must be spent in one year, which two programs would you recommend she choose? Why?
+
+## 25.
+From 1999 to 2009 heart disease was trending downward fairly steadily. The researchers want to see what would happen if we could get heart disease trending down again at the same rate as it was during these years. Project heart disease rates up to 2030 if they were to start trending downward at the 1999-2009 rate. 
+
+## 26.
+The think tank wants to recommend piloting the suicide prevention program intervention in one state which state would each have the most impact and why? Does your recommendation target sheer numbers Of lives saved or the trend Of the state? Why? Explain your rationale and method. 
