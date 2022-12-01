@@ -43,7 +43,9 @@ summary(data)
 # Part 1: Problem Definition
 
 ## 1. 
-Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
+### Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
+
+The agriculture industry would experience a loss due to their being fewer people in the workforce to grow food. A decrease in the availability of food would affect everybody. 
 
 ## 2. 
 Describe in no more than a few sentences an example of how insurance may be used to help mitigate or manage the losses you noted in question 1.
