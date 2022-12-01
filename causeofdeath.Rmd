@@ -45,13 +45,17 @@ summary(data)
 ## 1. 
 ### Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
 
-The agriculture industry would experience a loss due to their being fewer people in the workforce to grow food. A decrease in the availability of food would affect everybody. 
+The agriculture industry would experience a loss due to their being fewer people in the workforce to grow food. A decrease in the availability of food would affect everybody. The United States Department of Defense relies on a very large workforce to function; with increasing mortality rates, their industry will suffer.
 
 ## 2. 
-Describe in no more than a few sentences an example of how insurance may be used to help mitigate or manage the losses you noted in question 1.
+### Describe in no more than a few sentences an example of how insurance may be used to help mitigate or manage the losses you noted in question 1.
+
+Insurance such as health insurance would be able to better provide treatment to people in those industries to get them the aid they need to survive. As mental health problems are increasing alongside physical health issues, health insurance to cover treatment for both would be most effective.
 
 ## 3. 
-Describe in no more than a few sentences an example of how implementing new policies, procedures, or systems to help change behaviors of those involved to help mitigate or manage the losses you noted in this scenario.
+### Describe in no more than a few sentences an example of how implementing new policies, procedures, or systems to help change behaviors of those involved to help mitigate or manage the losses you noted in this scenario.
+
+Teaching better information and increasing awareness about mental health would decrease mortality rates from suicides. Greater availability for drug treatments and education about drugs would decrease the mortality from 
 
 ## 4. 
 Describe in no more than a few sentences an example of how those involved in the scenario may be able to help modify the possible outcomes to help mitigate or manage the losses you noted.
