@@ -40,8 +40,13 @@ data$Cause = as.factor(data$Cause)
 data$State = as.factor(data$State)
 summary(data)
 ```
-<<<<<<< HEAD
-# Part 1: Problem Definition
+\pagebreak
+<br>
+<div class="section-header">
+  <div class="section-header-line"></div>
+  <div class="section-header-box"><span class="h1">Part 1: Problem Definition</span></div>
+</div>
+<br>
 
 ## 1. 
 ### Describe in a few sentences two different groups, industries, sectors, or other areas of society that would experience a loss due to an increase in mortality rate in the United States.
@@ -63,7 +68,13 @@ Teaching better information and increasing awareness about mental health would d
 
 The think tank in the scenario could advocate for greater suicide or drug related death prevention to change government policies.
 
-# Part 2: Data Identification and Analysis
+\pagebreak
+<br>
+<div class="section-header">
+  <div class="section-header-line"></div>
+  <div class="section-header-box"><span class="h1">Part 2: Data Identification and Analysis</span></div>
+</div>
+<br>
 
 ## 5. 
 ### Based on the five categories outlined in the Actuarial Process Guide, what category (or categories) do you classify the attached dataset into? Provide a rationale for your reasoning.
@@ -128,15 +139,14 @@ knitr::kable(table)
 
 The data in the raw dataset and the published data differ significantly in all sections, in some cases the raw data shows significantly higher numbers and in others it shows lower numbers compared to the published data.
 
-=======
+
+\pagebreak
 <br>
 <div class="section-header">
   <div class="section-header-line"> </div>
-  <div class="section-header-box">Part 2</div>
+  <div class="section-header-box">Part 3: Mathematical Modeling</div>
 </div>
->>>>>>> a2f4686670698c3763b54648930ad299784416f6
-
-# Part 3: Mathematical Modeling
+<br>
 
 ## 9.
 ### The information in the Scenario Introduction describes the % annual reduction in mortality expected for each Of the programs listed - this is an assumption made to simplify the modeling process. How and why might this assumption limit the realism Of modeling and forecasting future impact Of the programs? Describe one way in which easing or revisiting this assumption could lead to an interesting and useful analysis in future years.
@@ -285,7 +295,13 @@ year = data.frame(Year)
 predict.lm(hmodel, year)
 ```
 
-# Part 4: Critical Thinking & Risk Analysis
+\pagebreak
+<br>
+<div class="section-header">
+  <div class="section-header-line"> </div>
+  <div class="section-header-box">Part 4: Critical Thinking & Risk Analysis</div>
+</div>
+<br>
 
 ## 21.
 Using your model created in Question #18, if none of the proposed programs (suicide prevention, opiod, heart disease) are implemented, what is the predicted number Of US deaths in 2025? 
@@ -314,7 +330,13 @@ The Smithsonian quote in the Introduction to this scenario suggests that the ris
 
 The data overwhelmingly supports the claim that drug overdoses and rise in suicide are largely contributing to the decrease in life expectancy. According to the CDC Leading Causes Of Death Visualization, unintentional injury is the leading cause of death for all individuals aged 1-44. Between individuals aged 10-34, suicide is either the second or third highest cause of death. Historically, many causes of death have been oscillating, generally staying around the same amounts over large periods of time. Unintentional injury and suicide however, have been steadily increasing throughout the entirety of the dataset. Furthermore, unintentional injury and suicide seem mostly prevalent among younger people, whereas malignant neoplasms and heart disease are prevalent among older people, because of this, deaths from overdoses or suicides have a greater influence on the life expectancy.
 
-# Part 5: Recommendations
+\pagebreak
+<br>
+<div class="section-header">
+  <div class="section-header-line"> </div>
+  <div class="section-header-box">Part 5: Recommendations</div>
+</div>
+<br>
 
 ## 24.
 The head of the think tank is able to fundraise up to $100,000,000 for program implementations and wishes to use that money to fund two Of the programs. If all monies must be spent in one year, which two programs would you recommend she choose? Why?
