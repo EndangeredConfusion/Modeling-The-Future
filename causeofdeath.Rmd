@@ -20,6 +20,7 @@ Libraries Needed:
 library(tidyverse)
 library(ggplot2)
 library(knitr)
+library(dplyr)
 ```
 <br>
 Reading in the data
@@ -190,6 +191,7 @@ The average cost for end-of-life medical care for a cancer patient in the U.S. i
 What is the expected value of loss in medical costs for an individual who dies of cancer? 
 ```{r}
 ```
+$105,500
 
 ## 16.
 Create a graphical display that best demonstrates the distribution of the six most common causes Of death in 2016. 
@@ -204,40 +206,138 @@ ggplot(data = topDeaths, aes(x="", y=total, fill=Cause)) +
 
 ## 17.
 Create a scatter plot or line graph that charts each of the top 10 causes of death over the 1999-2020 time period (total sum of deaths, not average deaths). Offer two observations from the chart about the trends in causes of death. 
-```{r}
-topDeaths = head(data %>% group_by(Cause) %>% summarize(total = sum(Deaths)) %>% arrange(desc(total)), n=10)
+```{r echo=FALSE}
+doh = data %>% group_by(Year) %>% filter(Cause == "Diseases of heart (I00-I09,I11,I13,I20-I51)") %>% summarize(total = sum(Deaths))
+mne = data %>% group_by(Year) %>% filter(Cause == "Malignant neoplasms (C00-C97)") %>% summarize(total = sum(Deaths))
+acc = data %>% group_by(Year) %>% filter(Cause == "Accidents (unintentional injuries) (V01-X59,Y85-Y86)") %>% summarize(total = sum(Deaths))
+clr = data %>% group_by(Year) %>% filter(Cause == "Chronic lower respiratory diseases (J40-J47)") %>% summarize(total = sum(Deaths))
+cbr = data %>% group_by(Year) %>% filter(Cause == "Cerebrovascular diseases (I60-I69)") %>% summarize(total = sum(Deaths))
+inf = data %>% group_by(Year) %>% filter(Cause == "Influenza and pneumonia (J09-J18)") %>% summarize(total = sum(Deaths))
+alz = data %>% group_by(Year) %>% filter(Cause == "Alzheimer's disease (G30)") %>% summarize(total = sum(Deaths))
+nep = data %>% group_by(Year) %>% filter(Cause == "Nephritis, nephrotic syndrome and nephrosis (N00-N07,N17-N19,N25-N27)") %>% summarize(total = sum(Deaths))
+tra = data %>% group_by(Year) %>% filter(Cause == "Transport accidents (V01-V99,Y85)") %>% summarize(total = sum(Deaths))
+ish = data %>% group_by(Year) %>% filter(Cause == "Intentional self-harm (suicide) (*U03,X60-X84,Y87.0)") %>% summarize(total = sum(Deaths))
+
+topDeaths = data.frame("Diseases_of_heart" = doh, "Malignant neoplasms" = mne, "Accidents" = acc, "Chronic lower respiratory diseases" = clr, "Cerebrovascular diseases" = cbr, "Influenza and pneumonia" = inf, 
+                       "Alzheimer's disease" = alz, "Nephritis, nephrotic syndrome and nephrosis" = nep, "Transport accidents" = tra, "Intentional self-harm" = ish)
+
+ggplot(data=topDeaths, aes(Diseases_of_heart.Year, Diseases_of_heart.total)) +
+  geom_line()
+ggplot(data=topDeaths, aes(Malignant.neoplasms.Year, Malignant.neoplasms.total)) +
+  geom_line()
+ggplot(data=topDeaths, aes(Accidents.Year, Accidents.total)) +
+  geom_line()
+ggplot(data=topDeaths, aes(Chronic.lower.respiratory.diseases.Year, Chronic.lower.respiratory.diseases.total)) +
+  geom_line()
+ggplot(data=topDeaths, aes(Cerebrovascular.diseases.Year, Cerebrovascular.diseases.total)) +
+  geom_line()
+ggplot(data=topDeaths, aes(Influenza.and.pneumonia.Year, Influenza.and.pneumonia.total)) +
+  geom_line()
+ggplot(data=topDeaths, aes(Alzheimer.s.disease.Year, Alzheimer.s.disease.total)) +
+  geom_line()
+ggplot(data=topDeaths, aes(Nephritis..nephrotic.syndrome.and.nephrosis.Year, Nephritis..nephrotic.syndrome.and.nephrosis.total)) +
+  geom_line()
+ggplot(data=topDeaths, aes(Transport.accidents.Year, Transport.accidents.total)) +
+  geom_line()
+ggplot(data=topDeaths, aes(Intentional.self.harm.Year, Intentional.self.harm.total)) +
+  geom_line()
 ```
+
+Diseases of heart have been dropping significantly until 2013 where they began to increase and spiked up in 2020. Influenza and Pneumonia oscillates from year to year, sometimes being severe one year, less severe the next, and severe again after that.
 
 ## 18.
 Create a model that uses time to predict the number Of deaths from all causes (consider 1999 as t=O). Give the equation of your model and justify how you chose your model. What might be some limitations or cautions Of using this model to predict future death totals considering the sudden increase in deaths due to the onset of the COVID-19 pandemic? 
 ```{r}
+topDeaths = data %>% group_by(Year) %>% summarize(total = sum(Deaths))
+topDeaths$Year = topDeaths$Year - 1999
 
+lmodel <- lm(total~Year, data = topDeaths)
+summary(lmodel)
+ggplot(topDeaths, aes(Year, total)) +
+  geom_point() +
+  geom_smooth(method = lm, model = total~Year)
 ```
 
+The equation of the model is total=m*Year+b, I chose this model because the data does not look like it can fit any other function accurately. The linear model provides can consistent fit over the data whereas other models would become innacurate at the ends. The model may be inaccurate because the number of deaths in 2020 is disproportionately high due to the COVID-19 pandemic. Since the model is a linear model, the outlier will affect its predictions for future years by a disproportionately large amount.
+
 ## 19.
-Since Heart Disease continues to be a leading cause of death in the US, researchers want to predict the number of deaths from itin the future. Use the data to create a model that uses time to predict the number of Heart Disease deaths (consider 1999 as t=O). Give the equation of your model and justify how you chose your model.
+Since Heart Disease continues to be a leading cause of death in the US, researchers want to predict the number of deaths from it in the future. Use the data to create a model that uses time to predict the number of Heart Disease deaths (consider 1999 as t=O). Give the equation of your model and justify how you chose your model.
+
+```{r}
+heartDeaths = data %>% group_by(Year) %>% filter(Cause == "Diseases of heart (I00-I09,I11,I13,I20-I51)") %>% summarize(total = sum(Deaths))
+heartDeaths$Year = heartDeaths$Year - 1999
+
+hmodel <- lm(total ~ Year + I(Year^2), data=heartDeaths)
+summary(hmodel)
+
+ggplot(data = heartDeaths, aes(x=Year, y = total)) +
+	geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x + I(x^2))
+```
+
+The equation of this model is total = a*x^2+bx+c. I chose a quadratic model because it provides a very accurate fit to the data with an R^2 of 0.9818. 
 
 ## 20.
 Using this model, predict the number Of deaths from heart disease in 2025.
+```{r}
+Year = c(25)
+year = data.frame(Year)
+predict.lm(hmodel, year)
+```
 
 # Part 4: Critical Thinking & Risk Analysis
 
 ## 21.
 Using your model created in Question #18, if none of the proposed programs (suicide prevention, opiod, heart disease) are implemented, what is the predicted number Of US deaths in 2025? 
+```{r}
+Year = c(25)
+year = data.frame(Year)
+predict.lm(lmodel, year)
+```
 
 ## 22.
 If the suicide prevention program is implemented effectively ONLY (ie, the opioid intervention and heart disease prevention programs are NOT implemented), what is the predicted number of US suicides in 2025?
+```{r}
+sDeaths = data %>% group_by(Year) %>% filter(Cause == "Intentional self-harm (suicide) (*U03,X60-X84,Y87.0)") %>% summarize(total = sum(Deaths))
+sDeaths$Year = heartDeaths$Year - 1999
+
+smodel <- lm(total~Year, data=sDeaths)
+summary(smodel)
+
+Year = c(25)
+year = data.frame(Year)
+predict.lm(smodel, year) * 0.76
+```
 
 ## 23.
 The Smithsonian quote in the Introduction to this scenario suggests that the rises in suicide and drug overdose are some of the leading causes of the decrease in American life expectancy. Does the data support this contention? Consider the information contained in the table below retrieved from the CDC's WISQARS Leading Causes Of Death Visualization tool along with the data analysis you have already conducted with the 1999-2020 Cause Of Death Dataset in explaining and justifying your answer.
+
+The data overwhelmingly supports the claim that drug overdoses and rise in suicide are largely contributing to the decrease in life expectancy. According to the CDC Leading Causes Of Death Visualization, unintentional injury is the leading cause of death for all individuals aged 1-44. Between individuals aged 10-34, suicide is either the second or third highest cause of death. Historically, many causes of death have been oscillating, generally staying around the same amounts over large periods of time. Unintentional injury and suicide however, have been steadily increasing throughout the entirety of the dataset. Furthermore, unintentional injury and suicide seem mostly prevalent among younger people, whereas malignant neoplasms and heart disease are prevalent among older people, because of this, deaths from overdoses or suicides have a greater influence on the life expectancy.
 
 # Part 5: Recommendations
 
 ## 24.
 The head of the think tank is able to fundraise up to $100,000,000 for program implementations and wishes to use that money to fund two Of the programs. If all monies must be spent in one year, which two programs would you recommend she choose? Why?
 
+The two most influential programs would be Opioid and Heart Disease. Although they have a lower impact on % deaths per year, the total number of deaths in each category is significantly higher, thus making the smaller % still save more lives.
+
 ## 25.
-From 1999 to 2009 heart disease was trending downward fairly steadily. The researchers want to see what would happen if we could get heart disease trending down again at the same rate as it was during these years. Project heart disease rates up to 2030 if they were to start trending downward at the 1999-2009 rate. 
+From 1999 to 2009 heart disease was trending downward fairly steadily. The researchers want to see what would happen if we could get heart disease trending down again at the same rate as it was during these years. Project heart disease rates up to 2030 if they were to start trending downward at the 1999-2009 rate.
+```{r}
+deaths1999 = data %>% filter(Cause == "Diseases of heart (I00-I09,I11,I13,I20-I51)" & Year == "1999") %>% summarize(total = sum(Deaths))
+deaths2009 = data %>% filter(Cause == "Diseases of heart (I00-I09,I11,I13,I20-I51)" & Year == "2009") %>% summarize(total = sum(Deaths))
+decrease = (deaths1999-deaths2009)/(deaths1999) # percentage decrease in heart disease deaths from 1999-2009
+deaths2020 = data %>% filter(Cause == "Diseases of heart (I00-I09,I11,I13,I20-I51)" & Year == "2020") %>% summarize(total = sum(Deaths))
+pred = deaths2020*(1-decrease)
+pred
+```
+
+If heart disease deaths decreased at the same rate as they had in 1999-2009 starting in 2020, the deaths in 2030 would be ~9791883.
 
 ## 26.
-The think tank wants to recommend piloting the suicide prevention program intervention in one state which state would each have the most impact and why? Does your recommendation target sheer numbers Of lives saved or the trend Of the state? Why? Explain your rationale and method. 
+The think tank wants to recommend piloting the suicide prevention program intervention in one state which state would each have the most impact and why? Does your recommendation target sheer numbers Of lives saved or the trend Of the state? Why? Explain your rationale and method.
+```{r}
+data %>% group_by(State) %>% filter(Cause == "Intentional self-harm (suicide) (*U03,X60-X84,Y87.0)") %>% summarize(total = sum(Deaths)) %>% arrange(desc(total))
+```
+
+The best state to pilot the suicide prevention program would be California because it would save the largest amount of lives. If the cost and the % annual decrease in deaths stay constant for every state, them implementing it in California would have the greatest effect because California has the largest population and by extension, the highest number of deaths by suicide.
