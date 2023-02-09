@@ -1,0 +1,38 @@
+---
+title: "Beginning Crimes"
+author: "Kaeshev ALapati"
+date: "2023-02-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Libraries:
+```{r}
+library(tidyverse)
+library(readxl)
+library(knitr)
+library(ggplot2)
+```
+
+Reading in Data:
+```{r}
+crime_data = read_csv("C:\\Users\\Kaeshev_Alapati\\Downloads\\Crimes_-_2001_to_Present.csv")
+head(crime_data)
+```
+```{r}
+temperature_data = read_csv("C:\\Users\\Kaeshev_Alapati\\OneDrive - Cary Academy\\Staculus\\Chicago area average temperature data.csv")
+temperature_data = temperature_data %>% pivot_longer(!Year, names_to = "month", values_to = "temp")
+#temperature_data = temperature_data %>% mutate(date = as.Date(Year month))
+head(temperature_data)
+```
+Important bits of crime data:
+```{r}
+important_crime_data = crime_data %>% select(Date, 'Primary Type', Arrest, Domestic, Year)
+```
+Graphing Data:
+```{r}
+ggplot(important_crime_data, aes(x=(Date))) + geom_density()
+```
