@@ -1,0 +1,197 @@
+---
+title: "Beginning Crimes"
+author: "Kaeshev ALapati"
+date: "2023-02-02"
+output: html_document
+---
+
+```{r}
+library(sqldf)
+library(tidyverse)
+library(tigerstats)
+library(lattice)
+library(lubridate)
+library(geojsonR)
+
+#crime_data <- read.csv.sql("C:\\Users\\Kaeshev_Alapati\\Downloads\\Crimes_-_2001_to_Present.csv",
+#                           sql = "select * from file where `Date` > 2021", eol = "\n")
+# 
+# con = file("C:\\Users\\Kaeshev_Alapati\\Downloads\\Crimes_-_2001_to_Present.csv", "r")
+# csv = read.csv(con, nrows = 1000)
+# close(con)
+# df = data.frame(csv)
+
+df <- read_csv("data/Crimes_-_2001_to_Present.csv")
+```
+
+```{r}
+df_short <- df %>%
+  select(Date, "Community Area")
+df_short <- df_short %>%
+  mutate(Date = sub('.{12}$', '', df_short$Date)) %>%
+  mutate(Date = as.Date(Date, format = "%m/%d/%Y"))
+
+df_short <- df_short[df_short$Date > "2015-1-1",]
+
+```
+
+```{r}
+df_short <- df_short %>% mutate(Wday = wday(df_short$Date))
+df_short <- df_short %>% mutate(Month = month(df_short$Date))
+df_short <- df_short %>% mutate(Year = year(df_short$Date))
+head(mdy(sprintf("%d/01/%d",  df_short$Month, df_short$Year)))
+df_short <- df_short %>% mutate(DayMonth = mdy(sprintf("%d/01/%d",  Month, Year)))
+```
+
+```{r}
+days = 1:7
+crimes_by_day = c()
+for (day in days) {
+  crimes_by_day = append(crimes_by_day, count(df_short$Wday == day))
+}
+
+crimes_by_day_frame = data.frame(days, crimes_by_day)
+ggplot(data=crimes_by_day_frame, aes(x = days, y = crimes_by_day)) +
+  geom_bar(stat="identity")
+```
+
+```{r}
+months = 1:12
+crimes_by_month = c()
+for (month in months) {
+  crimes_by_month = append(crimes_by_month, count(df_short[df_short$Date < "2023-1-1",]$Month == month))
+}
+
+crimes_by_month_frame = data.frame(months, crimes_by_month)
+ggplot(data=crimes_by_month_frame, aes(x = months, y = crimes_by_month)) +
+  geom_bar(stat="identity")
+```
+
+```{r}
+dates <- df_short$Date
+crimes_by_date <- c()
+for (date in dates) {
+  crimes_by_date <- append(crimes_by_date, count(df_short$Date == date))
+}
+
+crimes_by_date_frame <- data.frame(dates, crimes_by_date)
+
+date_model <- lm(crimes_by_date ~ dates, crimes_by_date_frame)
+print(summary(date_model))
+```
+
+```{r}
+temperature_data <- read_csv("data/Chicago area average temperature data.csv")
+temperature_data <- temperature_data %>% pivot_longer(!Year, names_to = "month", values_to = "temp")
+temperature_data <- temperature_data %>% mutate(DayMonth = mdy(sprintf("%s/01/%d",  month, Year)))
+```
+
+```{r}
+df_short = merge(df_short, temperature_data, by="DayMonth")
+```
+
+```{r}
+temps = unique(df_short$temp)
+crimes_by_temp = c()
+for (temp in temps) {
+  crimes_by_temp <- append(crimes_by_temp, count(df_short$temp == temp))
+}
+```
+```{r}
+crimes_by_temp_frame <- data.frame(temps, crimes_by_temp)
+
+ggplot(crimes_by_temp_frame, aes(x = temps, y = crimes_by_temp)) +
+    geom_point() +
+    geom_smooth(method = "lm")
+
+temp_model <- lm(crimes_by_temp ~ temps, crimes_by_temp_frame)
+print(summary(temp_model))
+```
+
+```{r}
+# community_areas_json <- FROM_GeoJson(url_file_string = "data/Boundaries - Community Areas (current).geojson")
+# print(community_areas_json$features[[1]])
+# print(typeof(community_areas_json$features[[1]]))
+# print()
+community_areas = read_csv("data/CommAreas.csv")
+community_areas %>% select(AREA_NUMBE, COMMUNITY)
+```
+```{r}
+school_data <- read_csv("data/Chicago_Public_Schools_-_School_Profile_Information_SY1617.csv")
+school_locations <- read_csv("data/CPS_School_Locations_1617.csv")
+school_locations <- school_locations %>% select(COMMAREA, School_ID)
+school_data <- merge(school_data, school_locations, "School_ID")
+school_data$COMMUNITY <- school_data$COMMAREA
+school_data %>% select(-school_data$COMMAREA)
+school_data = merge(school_data, community_areas, "COMMUNITY")
+```
+```{r}
+community_areas = 1:77
+asians_by_area = c()
+crimes_by_area = c()
+
+for (area in community_areas) {
+  schools_in_area = school_data %>% filter(school_data$AREA_NUMBE == area)
+  sum(schools_in_area$Student_Count_Asian)
+  asians_by_area <- append(asians_by_area, sum(schools_in_area$Student_Count_Asian))
+  crimes_by_area <- append(crimes_by_area, count(df_short$`Community Area` == area))
+}
+
+# for (temp in temps) {
+#   crimes_by_temp <- append(crimes_by_temp, count(df_short$temp == temp))
+# }
+print()
+```
+
+```{r}
+crimes_asians_frame <- data.frame(asians_by_area, crimes_by_area)
+log_asians = log(asians_by_area)
+log_crimes = log(crimes_by_area)
+
+asian_model <- lm(log_crimes ~ log_asians, crimes_asians_frame)
+print(summary(asians_model))
+summary(asian_model)
+```
+```{r}
+crimes_by_temp_frame <- data.frame(temps, crimes_by_temp)
+
+ggplot(crimes_by_temp_frame, aes(x = temps, y = crimes_by_temp)) +
+    geom_point() +
+    geom_smooth(method = "lm")
+
+temp_model <- lm(crimes_by_temp ~ temps, crimes_by_temp_frame)
+print(summary(temp_model))
+
+ggplot(crimes_asians_frame, aes(x = log_asians, y = log_crimes)) +
+  geom_point()
+```
+
+```{r}
+
+```
+
+```{r}
+table(df_short)
+head(df_short)
+summary(df_short)
+
+
+
+
+ggplot(df_short, aes(x = Date)) +
+  geom_histogram()
+
+
+histogram(~date|`Community Area`, data=df_short,
+          type="density",
+          xlab="Date",
+          main="Crimes Over Time by Community Area")
+          # breaks=seq(from=60,to=190,by=10),
+          # layout=c(1,2))
+
+
+# ggplot(df_short, aes(x = Date, y=`Community Area`)) +
+#   geom_point()
+
+```
+

@@ -21,7 +21,7 @@ library(sqldf)
 Reading in Data:
 ```{r}
 crime_data <- read_csv("data/Crimes_-_2001_to_Present.csv")
-head(crime_data)
+head(crime_data, 10)
 ```
 ```{r}
 temperature_data <- read_csv("data/Chicago area average temperature data.csv")
