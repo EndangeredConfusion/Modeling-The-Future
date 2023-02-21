@@ -12,7 +12,6 @@ library(tigerstats)
 library(lattice)
 library(lubridate)
 library(geojsonR)
-
 #crime_data <- read.csv.sql("C:\\Users\\Kaeshev_Alapati\\Downloads\\Crimes_-_2001_to_Present.csv",
 #                           sql = "select * from file where `Date` > 2021", eol = "\n")
 # 
@@ -20,7 +19,6 @@ library(geojsonR)
 # csv = read.csv(con, nrows = 1000)
 # close(con)
 # df = data.frame(csv)
-
 df <- read_csv("data/Crimes_-_2001_to_Present.csv")
 ```
 
@@ -30,9 +28,7 @@ df_short <- df %>%
 df_short <- df_short %>%
   mutate(Date = sub('.{12}$', '', df_short$Date)) %>%
   mutate(Date = as.Date(Date, format = "%m/%d/%Y"))
-
 df_short <- df_short[df_short$Date > "2015-1-1",]
-
 ```
 
 ```{r}
@@ -44,27 +40,36 @@ df_short <- df_short %>% mutate(DayMonth = mdy(sprintf("%d/01/%d",  Month, Year)
 ```
 
 ```{r}
+# wday: Sun < Mon < Tue < Wed < Thu < Fri < Sat
 days = 1:7
+days_name = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
 crimes_by_day = c()
+crimes_by_day_names = c()
 for (day in days) {
   crimes_by_day = append(crimes_by_day, count(df_short$Wday == day))
 }
 
-crimes_by_day_frame = data.frame(days, crimes_by_day)
-ggplot(data=crimes_by_day_frame, aes(x = days, y = crimes_by_day)) +
-  geom_bar(stat="identity")
+crimes_by_day_frame = data.frame(day = days, crimes_by_day, day_name = days_name)
+crimes_by_day_frame
+
+ggplot(data=crimes_by_day_frame, aes(x = day, y = crimes_by_day)) +
+  geom_bar(stat="identity") + geom_text(aes(label = day_name), vjust = 1.5, colour = "white") + geom_text(aes(label = crimes_by_day), vjust = 3.5, colour = "white")
+
+
 ```
 
 ```{r}
 months = 1:12
+month_names = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 crimes_by_month = c()
 for (month in months) {
   crimes_by_month = append(crimes_by_month, count(df_short[df_short$Date < "2023-1-1",]$Month == month))
 }
 
-crimes_by_month_frame = data.frame(months, crimes_by_month)
+# TODO: FIX THIS SHIT SOMEONE
+crimes_by_month_frame = data.frame(month = months, crimes_by_month, month_name = month_names)
 ggplot(data=crimes_by_month_frame, aes(x = months, y = crimes_by_month)) +
-  geom_bar(stat="identity")
+  geom_bar(stat="identity") + geom_text(aes(label = month_name), vjust = 1.5, colour = "white") + geom_text(aes(label = crimes_by_month), vjust = 3.5, colour = "white")
 ```
 
 ```{r}
@@ -73,9 +78,7 @@ crimes_by_date <- c()
 for (date in dates) {
   crimes_by_date <- append(crimes_by_date, count(df_short$Date == date))
 }
-
 crimes_by_date_frame <- data.frame(dates, crimes_by_date)
-
 date_model <- lm(crimes_by_date ~ dates, crimes_by_date_frame)
 print(summary(date_model))
 ```
@@ -99,11 +102,9 @@ for (temp in temps) {
 ```
 ```{r}
 crimes_by_temp_frame <- data.frame(temps, crimes_by_temp)
-
 ggplot(crimes_by_temp_frame, aes(x = temps, y = crimes_by_temp)) +
     geom_point() +
     geom_smooth(method = "lm")
-
 temp_model <- lm(crimes_by_temp ~ temps, crimes_by_temp_frame)
 print(summary(temp_model))
 ```
@@ -129,14 +130,12 @@ school_data = merge(school_data, community_areas, "COMMUNITY")
 community_areas = 1:77
 asians_by_area = c()
 crimes_by_area = c()
-
 for (area in community_areas) {
   schools_in_area = school_data %>% filter(school_data$AREA_NUMBE == area)
   sum(schools_in_area$Student_Count_Asian)
   asians_by_area <- append(asians_by_area, sum(schools_in_area$Student_Count_Asian))
   crimes_by_area <- append(crimes_by_area, count(df_short$`Community Area` == area))
 }
-
 # for (temp in temps) {
 #   crimes_by_temp <- append(crimes_by_temp, count(df_short$temp == temp))
 # }
@@ -147,51 +146,36 @@ print()
 crimes_asians_frame <- data.frame(asians_by_area, crimes_by_area)
 log_asians = log(asians_by_area)
 log_crimes = log(crimes_by_area)
-
 asian_model <- lm(log_crimes ~ log_asians, crimes_asians_frame)
 print(summary(asians_model))
 summary(asian_model)
 ```
 ```{r}
 crimes_by_temp_frame <- data.frame(temps, crimes_by_temp)
-
 ggplot(crimes_by_temp_frame, aes(x = temps, y = crimes_by_temp)) +
     geom_point() +
     geom_smooth(method = "lm")
-
 temp_model <- lm(crimes_by_temp ~ temps, crimes_by_temp_frame)
 print(summary(temp_model))
-
 ggplot(crimes_asians_frame, aes(x = log_asians, y = log_crimes)) +
   geom_point()
 ```
 
 ```{r}
-
 ```
 
 ```{r}
 table(df_short)
 head(df_short)
 summary(df_short)
-
-
-
-
 ggplot(df_short, aes(x = Date)) +
   geom_histogram()
-
-
 histogram(~date|`Community Area`, data=df_short,
           type="density",
           xlab="Date",
           main="Crimes Over Time by Community Area")
           # breaks=seq(from=60,to=190,by=10),
           # layout=c(1,2))
-
-
 # ggplot(df_short, aes(x = Date, y=`Community Area`)) +
 #   geom_point()
-
 ```
-
