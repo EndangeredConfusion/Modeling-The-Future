@@ -22,13 +22,20 @@ library(geojsonR)
 df <- read_csv("data/Crimes_-_2001_to_Present.csv")
 ```
 
+## Filtering and formatting crimes data
+# note start_date, end_date vars
 ```{r}
+start_date = "2020-1-1"
+end_date = "2022-12-31"
+
+
 df_short <- df %>%
   select(Date, "Community Area")
 df_short <- df_short %>%
   mutate(Date = sub('.{12}$', '', df_short$Date)) %>%
   mutate(Date = as.Date(Date, format = "%m/%d/%Y"))
-df_short <- df_short[df_short$Date > "2015-1-1",]
+df_short <- df_short[df_short$Date > start_date, ]
+df_short <- df_short[df_short$Date < end_date, ]
 ```
 
 ```{r}
@@ -37,10 +44,12 @@ df_short <- df_short %>% mutate(Month = month(df_short$Date))
 df_short <- df_short %>% mutate(Year = year(df_short$Date))
 head(mdy(sprintf("%d/01/%d",  df_short$Month, df_short$Year)))
 df_short <- df_short %>% mutate(DayMonth = mdy(sprintf("%d/01/%d",  Month, Year)))
+df_short <- df_short %>% mutate(MonthYear = format(Date, "%Y-%m"))
 ```
-
+## Crime by DOTW bar
 ```{r}
 # wday: Sun < Mon < Tue < Wed < Thu < Fri < Sat
+
 days = 1:7
 days_name = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
 crimes_by_day = c()
@@ -50,14 +59,11 @@ for (day in days) {
 }
 
 crimes_by_day_frame = data.frame(day = days, crimes_by_day, day_name = days_name)
-crimes_by_day_frame
 
 ggplot(data=crimes_by_day_frame, aes(x = day, y = crimes_by_day)) +
-  geom_bar(stat="identity") + geom_text(aes(label = day_name), vjust = 1.5, colour = "white") + geom_text(aes(label = crimes_by_day), vjust = 3.5, colour = "white")
-
-
+  geom_bar(stat="identity") + geom_text(aes(label = day_name), vjust = 1.5, colour = "white") + geom_text(aes(label = crimes_by_day), vjust = 3.5, colour = "white") + ggtitle(paste0("Crimes per day from ", start_date, " to ", end_date))
 ```
-
+## Crimes by month bar
 ```{r}
 months = 1:12
 month_names = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
@@ -66,22 +72,54 @@ for (month in months) {
   crimes_by_month = append(crimes_by_month, count(df_short[df_short$Date < "2023-1-1",]$Month == month))
 }
 
-# TODO: FIX THIS SHIT SOMEONE
+# TODO: FIX THIS SHIT SOMEONE please!
 crimes_by_month_frame = data.frame(month = months, crimes_by_month, month_name = month_names)
 ggplot(data=crimes_by_month_frame, aes(x = months, y = crimes_by_month)) +
-  geom_bar(stat="identity") + geom_text(aes(label = month_name), vjust = 1.5, colour = "white") + geom_text(aes(label = crimes_by_month), vjust = 3.5, colour = "white")
+  geom_bar(stat="identity") + geom_text(aes(label = month_name), vjust = 1.5, colour = "white") + geom_text(aes(label = crimes_by_month), vjust = 3.5, colour = "white") + ggtitle(paste0("Crimes per month from ", start_date, " to ", end_date))
 ```
-
+## Crimes by date timeseries
 ```{r}
-dates <- df_short$Date
+dates <- seq(as.Date(start_date), as.Date(end_date), by="days")
 crimes_by_date <- c()
 for (date in dates) {
   crimes_by_date <- append(crimes_by_date, count(df_short$Date == date))
 }
-crimes_by_date_frame <- data.frame(dates, crimes_by_date)
+crimes_by_date_frame <- data.frame(date = dates, crimes_by_date)
+head(crimes_by_date_frame)
+
+ggplot(data = crimes_by_date_frame, aes(x = date, y = crimes_by_date)) + geom_line() + ggtitle(paste0("Crimes over time from ", start_date, " to ", end_date))
+
 date_model <- lm(crimes_by_date ~ dates, crimes_by_date_frame)
 print(summary(date_model))
 ```
+
+## Crimes by community area
+```{r}
+community_areas = 1:77
+dates <- format(seq(as.Date(start_date), as.Date(end_date), by="months"), "%Y-%m")
+
+df_crimes_by_community_area_and_dates = data.frame(community_area = c(), date = c(), number_of_crimes = c())
+
+for (community_area in community_areas) {
+  for (date in dates) {
+    new_row = data.frame(community_area = community_area, MonthYear = date, 
+                         number_of_crimes = count(df_short$MonthYear == date & df_short$`Community Area` == community_area))
+    
+    df_crimes_by_community_area_and_dates = rbind(df_crimes_by_community_area_and_dates, new_row)
+  }
+}
+
+################################################# here
+
+date = "2020-10"
+class(date)
+date = as.Date(date, format="%Y-%m")
+class(date)
+date
+
+ggplot(df_crimes_by_community_area_and_dates, aes(x = as.Date(MonthYear, format="%Y-%m"), y = number_of_crimes))
+```
+
 
 ```{r}
 temperature_data <- read_csv("data/Chicago area average temperature data.csv")
@@ -108,6 +146,7 @@ ggplot(crimes_by_temp_frame, aes(x = temps, y = crimes_by_temp)) +
 temp_model <- lm(crimes_by_temp ~ temps, crimes_by_temp_frame)
 print(summary(temp_model))
 ```
+
 
 ```{r}
 # community_areas_json <- FROM_GeoJson(url_file_string = "data/Boundaries - Community Areas (current).geojson")
@@ -141,6 +180,7 @@ for (area in community_areas) {
 # }
 print()
 ```
+
 
 ```{r}
 crimes_asians_frame <- data.frame(asians_by_area, crimes_by_area)
