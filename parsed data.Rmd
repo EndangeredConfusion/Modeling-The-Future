@@ -4,7 +4,7 @@ author: "Kaeshev ALapati"
 date: "2023-02-02"
 output: html_document
 ---
-
+## Libraries
 ```{r}
 library(sqldf)
 library(tidyverse)
@@ -12,21 +12,18 @@ library(tigerstats)
 library(lattice)
 library(lubridate)
 library(geojsonR)
-#crime_data <- read.csv.sql("C:\\Users\\Kaeshev_Alapati\\Downloads\\Crimes_-_2001_to_Present.csv",
-#                           sql = "select * from file where `Date` > 2021", eol = "\n")
-# 
-# con = file("C:\\Users\\Kaeshev_Alapati\\Downloads\\Crimes_-_2001_to_Present.csv", "r")
-# csv = read.csv(con, nrows = 1000)
-# close(con)
-# df = data.frame(csv)
-df <- read_csv("data/Crimes_-_2001_to_Present.csv")
+```
+
+## Read in data (may take a while!)
+```{r}
+df <- data.table::fread("data/Crimes_-_2001_to_Present.csv")
 ```
 
 ## Filtering and formatting crimes data
 # note start_date, end_date vars
 ```{r}
-start_date = "2020-1-1"
-end_date = "2022-12-31"
+start_date <- "2020-1-1"
+end_date <- "2022-12-31"
 
 
 df_short <- df %>%
@@ -39,12 +36,13 @@ df_short <- df_short[df_short$Date < end_date, ]
 ```
 
 ```{r}
-df_short <- df_short %>% mutate(Wday = wday(df_short$Date))
-df_short <- df_short %>% mutate(Month = month(df_short$Date))
-df_short <- df_short %>% mutate(Year = year(df_short$Date))
-head(mdy(sprintf("%d/01/%d",  df_short$Month, df_short$Year)))
+df_short <- df_short %>% mutate(Wday = wday(df_short$Date)) # Add day of week column
+df_short <- df_short %>% mutate(Month = month(df_short$Date)) # Add month column
+df_short <- df_short %>% mutate(Year = year(df_short$Date)) # Add year column
 df_short <- df_short %>% mutate(DayMonth = mdy(sprintf("%d/01/%d",  Month, Year)))
 df_short <- df_short %>% mutate(MonthYear = format(Date, "%Y-%m"))
+
+df_short <- as.data.frame(df_short)
 ```
 ## Crime by DOTW bar
 ```{r}
@@ -123,7 +121,7 @@ ggplot(df_crimes_by_community_area_and_dates, aes(x = as.Date(MonthYear, format=
 
 ```{r}
 temperature_data <- read_csv("data/Chicago area average temperature data.csv")
-temperature_data <- temperature_data %>% pivot_longer(!Year, names_to = "month", values_to = "temp")
+temperature_data <- temperature_data %>% pivot_longer(!Year,   names_to = "month", values_to = "temp")
 temperature_data <- temperature_data %>% mutate(DayMonth = mdy(sprintf("%s/01/%d",  month, Year)))
 ```
 
@@ -145,6 +143,17 @@ ggplot(crimes_by_temp_frame, aes(x = temps, y = crimes_by_temp)) +
     geom_smooth(method = "lm")
 temp_model <- lm(crimes_by_temp ~ temps, crimes_by_temp_frame)
 print(summary(temp_model))
+```
+
+```{r}
+community_areas <- 1:77
+for (area in community_areas) {
+  df_short[sprintf('comm_area_%d', area)] <- df_short$`Community Area` == area
+}
+```
+```{r}
+commarea_model <- lm(crimes_by_temp ~ temps + comm_area_1, crimes_by_temp_frame)
+print(summary(temp_model_commarea))
 ```
 
 
@@ -197,8 +206,8 @@ ggplot(crimes_by_temp_frame, aes(x = temps, y = crimes_by_temp)) +
     geom_smooth(method = "lm")
 temp_model <- lm(crimes_by_temp ~ temps, crimes_by_temp_frame)
 print(summary(temp_model))
-ggplot(crimes_asians_frame, aes(x = log_asians, y = log_crimes)) +
-  geom_point()
+# ggplot(crimes_asians_frame, aes(x = log_asians, y = log_crimes)) +
+#   geom_point()
 ```
 
 ```{r}
@@ -219,3 +228,4 @@ histogram(~date|`Community Area`, data=df_short,
 # ggplot(df_short, aes(x = Date, y=`Community Area`)) +
 #   geom_point()
 ```
+

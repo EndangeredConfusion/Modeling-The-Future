@@ -1,0 +1,267 @@
+---
+title: "New Model"
+author: "Rohen Giralt, Kaeshev Alapati, Tymur Tkachenko"
+date: "2023-02-20"
+output: html_document
+---
+
+## Libraries
+```{r}
+library(sqldf)
+library(tidyverse)
+library(tigerstats)
+library(lattice)
+library(lubridate)
+library(geojsonR)
+library(magrittr)
+```
+
+## Read in crimes data (may take a while!)
+```{r}
+crimes <- data.table::fread("data/Crimes_-_2001_to_Present.csv") # Faster than read_csv
+```
+
+```{r}
+
+start_date <- "2020-1-1"
+end_date <- "2022-12-31"
+
+df_short <- crimes %>% select(Date, "Community Area", IUCR, "FBI Code") # Select desired columns
+df_short <- df_short %>% rename(Community_Area = "Community Area", FBI_Code = "FBI Code")
+
+df_short %<>%
+  mutate(Date = sub('.{12}$', '', df_short$Date)) %>% # idk kaeshev can u comment this
+  mutate(Date = as.Date(Date, format = "%m/%d/%Y"))
+df_short <- df_short[df_short$Date > start_date, ] # Filter desired dates
+df_short <- df_short[df_short$Date < end_date, ]
+
+df_short %<>%
+  mutate(Month = month(df_short$Date)) %>% # Add month column
+  mutate(Year = year(df_short$Date)) %>% # Add year column
+  mutate(DayMonth = mdy(sprintf("%d/01/%d",  Month, Year))) %>% # Add column based on month of each year (arbitrarily chosen to be first of each month)
+  select(-Year) # Remove Year column
+
+df_short <- as.data.frame(df_short) # Convert to data.frame (was previously data.table)
+```
+
+```{r}
+df_short_inital <- df_short
+```
+
+## Read in temperature data
+```{r}
+temperature_data <- read_csv("data/Chicago area average temperature data.csv")
+temperature_data %<>% pivot_longer(!Year, names_to = "month", values_to = "temp") %>%
+  mutate(DayMonth = mdy(sprintf("%s/01/%d",  month, Year))) %>%
+  select(temp, DayMonth)
+```
+
+## Combine datasets
+```{r}
+df_short %<>% merge(temperature_data, by="DayMonth")
+rm(temperature_data)
+```
+
+# Read Community Areas number/name mapping data
+```{r}
+community_areas <- read_csv("data/CommAreas.csv")
+community_areas %<>% select(AREA_NUMBE, COMMUNITY)
+```
+```{r}
+school_data <- read_csv("data/Chicago_Public_Schools_-_School_Profile_Information_SY1617.csv")
+school_locations <- read_csv("data/CPS_School_Locations_1617.csv")
+
+school_locations %<>% select(COMMAREA, School_ID)
+school_data %<>% merge(school_locations, "School_ID")
+school_data$"COMMUNITY" <- school_data$COMMAREA
+school_data %<>% merge(community_areas, "COMMUNITY")
+school_data$Community_Area <- school_data$AREA_NUMBE
+
+school_data %<>% select(Community_Area, Average_ACT_School, College_Enrollment_Rate_School, Student_Count_Low_Income, Student_Count_English_Learners, Student_Count_Special_Ed, Student_Count_Asian, Student_Count_Black, Student_Count_Hispanic, Student_Count_Multi, Student_Count_White, Student_Count_Total)
+```
+```{r}
+Average_ACT_Community <-                    tapply(school_data$Average_ACT_School,              school_data$Community_Area, mean, na.rm=TRUE)
+Average_College_Enrollment_Community <-     tapply(school_data$College_Enrollment_Rate_School,  school_data$Community_Area, mean, na.rm=TRUE)
+Total_Asian_Count_Community <-              tapply(school_data$Student_Count_Asian,             school_data$Community_Area, sum, na.rm=TRUE)
+Total_Black_Count_Community <-              tapply(school_data$Student_Count_Black,             school_data$Community_Area, sum, na.rm=TRUE)
+Total_Hispanic_Count_Community <-           tapply(school_data$Student_Count_Hispanic,          school_data$Community_Area, sum, na.rm=TRUE)
+Total_Multi_Count_Community <-              tapply(school_data$Student_Count_Multi,             school_data$Community_Area, sum, na.rm=TRUE)
+Total_White_Count_Community <-              tapply(school_data$Student_Count_White,             school_data$Community_Area, sum, na.rm=TRUE)
+Total_English_Learners_Count_Community <-   tapply(school_data$Student_Count_English_Learners,  school_data$Community_Area, sum, na.rm=TRUE)
+Total_Low_Income_Count_Community <-         tapply(school_data$Student_Count_Low_Income,        school_data$Community_Area, sum, na.rm=TRUE)
+Total_Student_Count_Community <-            tapply(school_data$Student_Count_Total,             school_data$Community_Area, sum, na.rm=TRUE)
+
+Asian_Proportion_Community              <- Total_Asian_Count_Community              / Total_Student_Count_Community
+Black_Proportion_Community              <- Total_Black_Count_Community              / Total_Student_Count_Community
+Hispanic_Proportion_Community           <- Total_Hispanic_Count_Community           / Total_Student_Count_Community
+Multi_Proportion_Community              <- Total_Multi_Count_Community              / Total_Student_Count_Community
+White_Proportion_Community              <- Total_White_Count_Community              / Total_Student_Count_Community
+English_Learners_Proportion_Community   <- Total_English_Learners_Count_Community   / Total_Student_Count_Community
+Low_Income_Proportion_Community         <- Total_Low_Income_Count_Community         / Total_Student_Count_Community
+
+condensed_school_data <- data.frame(Community_Area = 1:77, Average_ACT_Community, Average_College_Enrollment_Community, Asian_Proportion_Community, Black_Proportion_Community, Hispanic_Proportion_Community, Multi_Proportion_Community, White_Proportion_Community, English_Learners_Proportion_Community, Low_Income_Proportion_Community, Total_Student_Count_Community, Total_Asian_Count_Community, Total_Black_Count_Community, Total_Hispanic_Count_Community, Total_Multi_Count_Community, Total_White_Count_Community, Total_English_Learners_Count_Community, Total_Low_Income_Count_Community)
+```
+
+```{r}
+df_short <- df_short %>% merge(condensed_school_data, "Community_Area")
+
+rm(community_areas, school_locations, school_data)
+rm(Average_ACT_Community, Average_College_Enrollment_Community, Total_Asian_Count_Community, Total_Low_Income_Count_Community, Total_Student_Count_Community, Asian_Proportion_Community, Black_Proportion_Community, Hispanic_Proportion_Community, Multi_Proportion_Community, English_Learners_Proportion_Community, Low_Income_Proportion_Community)
+```
+
+```{r}
+life_expectancy <- read_csv("data/Public_Health_Statistics_-_Life_Expectancy_By_Community_Area_-_Historical.csv")
+```
+
+```{r}
+
+housing <- read_csv("data/Affordable_Rental_Housing_Developments.csv") %>%
+  select("Community Area Number", "Property Type", Units) %>%
+  rename(Community_Area = "Community Area Number", Property_Type = "Property Type")
+```
+```{r}
+# total units of each property type, by community
+total_units_frame <- data.frame(tapply(housing$Units, list(housing$Property_Type, housing$Community_Area), sum))
+total_units_frame %<>%
+  mutate(Property_Type = rownames(total_units_frame)) %>%
+  pivot_longer(cols = !Property_Type, names_to = "Community_Area", values_to = "Total_Units_Property_Community")
+total_units_frame %<>%
+  mutate(Community_Area = as.numeric(str_extract(total_units_frame$Community_Area, "\\d+"))) %>%
+  drop_na()
+
+missing_comm_areas <- data.frame(
+  Community_Area = symdiff(1:77, housing$Community_Area),
+  Property_Type = NA,
+  Total_Units_Property_Community = rep(0, 77 - length(unique(housing$Community_Area)))
+)
+
+total_units_frame <- rbind(total_units_frame, missing_comm_areas, stringsAsFactors = FALSE)
+
+housing %<>% merge(total_units_frame, c("Community_Area", "Property_Type"))
+
+# x = data.frame(tapply(total_units_frame$Total_Units_Property_Community, list(total_units_frame$Community_Area, total_units_frame$Property_Type), sum))
+# y = data.frame(tapply(housing$Units, list(housing$Property_Type, housing$Community_Area), sum))
+# Total_Senior_Housing_Community =
+# total_units_frame %>% mutate(
+#   Total_Senior_Housing_Community =
+# )
+```
+
+```{r}
+df_short <- df_short %>% merge(housing, "Community_Area")
+```
+
+
+```{r}
+
+# df_short <- df_short %>% mutate(
+#   Senior_Housing_Count =               count(lapply(Property_Type, grepl, "Senior", fixed = TRUE)), # `grepl` is basically `contains`
+#   ARO_Housing_Count =                  count(lapply(Property_Type, grepl, "ARO", fixed = TRUE)),
+#   Intergenerational_Housing_Count =    count(lapply(Property_Type, grepl, "Inter-generational", fixed = TRUE)),
+#   Multifamily_Housing_Count =          count(lapply(Property_Type, grepl, "Multifamily", fixed = TRUE)),
+#   Supportive_Housing_Count =           count(lapply(Property_Type, grepl, "Supportive", fixed = TRUE)),
+#   SRO_Housing_Count =                  count(lapply(Property_Type, grepl, "SRO", fixed = TRUE)),
+#   Artist_Housing_Count =               count(lapply(Property_Type, grepl, "Artist", fixed = TRUE)),
+# )
+```
+
+# save
+```{r}
+save(df_short, file = "data/df_short.Rdata")
+```
+
+# Models
+## Get data
+```{r}
+parsed_data <- df_short %>% count(temp, DayMonth, Community_Area, Average_ACT_Community, Average_College_Enrollment_Community, Asian_Proportion_Community, Black_Proportion_Community, Hispanic_Proportion_Community, Multi_Proportion_Community, White_Proportion_Community, English_Learners_Proportion_Community, Low_Income_Proportion_Community, Total_Asian_Count_Community, Total_Black_Count_Community, Total_Hispanic_Count_Community, Total_Multi_Count_Community, Total_White_Count_Community, Total_English_Learners_Count_Community, Total_Low_Income_Count_Community, Total_Student_Count_Community,                                  Property_Type, Total_Units_Property_Community)
+```
+Dummies
+```{r}
+parsed_data <- parsed_data %>% mutate(
+  housing_is_Senior =               as.vector(lapply(Property_Type, grepl, "Senior", fixed = TRUE), mode = "logical"), # `grepl` is basically `contains`
+  housing_is_ARO =                  as.vector(lapply(Property_Type, grepl, "ARO", fixed = TRUE), mode = "logical"),
+  housing_is_Intergenerational =    as.vector(lapply(Property_Type, grepl, "Inter-generational", fixed = TRUE), mode = "logical"),
+  housing_is_Multifamily =          as.vector(lapply(Property_Type, grepl, "Multifamily", fixed = TRUE), mode = "logical"),
+  housing_is_Supportive =           as.vector(lapply(Property_Type, grepl, "Supportive", fixed = TRUE), mode = "logical"),
+  housing_is_SRO =                  as.vector(lapply(Property_Type, grepl, "SRO", fixed = TRUE), mode = "logical"),
+  housing_is_Artist =               as.vector(lapply(Property_Type, grepl, "Artist", fixed = TRUE), mode = "logical"),
+)
+```
+
+```
+## Model
+```{r}
+# factors <- c(
+#   parsed_data$Average_ACT_Community,
+#   parsed_data$Average_College_Enrollment_Community,
+#   parsed_data$Total_Asian_Count_Community,
+#   parsed_data$Total_Black_Count_Community,
+#   parsed_data$Total_Hispanic_Count_Community,
+#   parsed_data$Total_Multi_Count_Community,
+#   parsed_data$Total_White_Count_Community,
+#   parsed_data$Total_Low_Income_Count_Community,
+#   parsed_data$Total_English_Learners_Count_Community,
+#   # Total_Student_Count_Community
+#   parsed_data$temp
+# )
+
+model <- lm(
+  n ~
+  Average_ACT_Community +
+  # Average_College_Enrollment_Community +
+  Total_Asian_Count_Community +
+  Total_Black_Count_Community +
+  # Total_Hispanic_Count_Community +
+  Total_Multi_Count_Community +
+  Total_White_Count_Community +
+  Total_Low_Income_Count_Community +
+  Total_English_Learners_Count_Community +
+  Total_Units_Property_Community * housing_is_Senior + # wait this is not the right way to do this
+  Total_Units_Property_Community * housing_is_ARO +
+  Total_Units_Property_Community * housing_is_Intergenerational +
+  Total_Units_Property_Community * housing_is_Multifamily +
+  Total_Units_Property_Community * housing_is_Supportive +
+  Total_Units_Property_Community * housing_is_SRO +
+  Total_Units_Property_Community * housing_is_Artist +
+  # Total_Student_Count_Community +
+  temp,
+  data = parsed_data)
+print(summary(model))
+
+# model2 <- lm(
+#   log(n) ~
+#     log(Total_Black_Count_Community) +
+#       log(Total_Student_Count_Community)
+#       log(Total_Low_Income_Count_Community) + temp,
+#   data = parsed_data
+# )
+print(summary(model2))
+
+ggplot(parsed_data, aes(x = log(Total_Black_Count_Community), y = log(n))) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+
+# print(summary(lm(log(n) ~ log(Total_Student_Count_Community), data = parsed_data)))
+# print(summary(lm(n ~ log(Total_Student_Count_Community), data = parsed_data)))
+# print(summary(lm(n ~ Total_Student_Count_Community, data = parsed_data)))
+
+# ggplot(parsed_data, aes(x = log(Total_Student_Count_Community), y = log(n))) +
+#         geom_point() +
+#         geom_smooth(method = "lm")
+#
+# ggplot(parsed_data, aes(x = log(Total_Student_Count_Community), y = (n))) +
+#         geom_point() +
+#         geom_smooth(method = "lm")
+#
+# ggplot(parsed_data, aes(x = (Total_Student_Count_Community), y = (n))) +
+#         geom_point() +
+#         geom_smooth(method = "lm")
+
+
+# for (factor in factor) {
+#     ggplot(parsed_data, aes(x = factor, y = n)) +
+#         geom_point() +
+#         geom_smooth(method = "lm")
+# }
+```
