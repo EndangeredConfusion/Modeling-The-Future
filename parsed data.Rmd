@@ -4,7 +4,7 @@ author: "Kaeshev ALapati"
 date: "2023-02-02"
 output: html_document
 ---
-## Libraries
+
 ```{r}
 library(sqldf)
 library(tidyverse)
@@ -12,22 +12,27 @@ library(tigerstats)
 library(lattice)
 library(lubridate)
 library(geojsonR)
-```
-
-## Read in data (may take a while!)
-```{r}
-df <- data.table::fread("data/Crimes_-_2001_to_Present.csv")
+#crime_data <- read.csv.sql("C:\\Users\\Kaeshev_Alapati\\Downloads\\Crimes_-_2001_to_Present.csv",
+#                           sql = "select * from file where `Date` > 2021", eol = "\n")
+# 
+# con = file("C:\\Users\\Kaeshev_Alapati\\Downloads\\Crimes_-_2001_to_Present.csv", "r")
+# csv = read.csv(con, nrows = 1000)
+# close(con)
+# df = data.frame(csv)
+df <- read_csv("data/Crimes_-_2001_to_Present.csv")
+housing_economics <- read_csv("C:/Users/Kaeshev_Alapati/Downloads/Census_Data_-_Selected_socioeconomic_indicators_in_Chicago__2008___2012.csv")
+housing_economics = housing_economics %>% filter(!is.na(`Community Area Number`))
 ```
 
 ## Filtering and formatting crimes data
 # note start_date, end_date vars
 ```{r}
-start_date <- "2020-1-1"
-end_date <- "2022-12-31"
+start_date = "2020-1-1"
+end_date = "2022-12-31"
 
 
 df_short <- df %>%
-  select(Date, "Community Area")
+  select(Date, "Community Area", "Primary Type")
 df_short <- df_short %>%
   mutate(Date = sub('.{12}$', '', df_short$Date)) %>%
   mutate(Date = as.Date(Date, format = "%m/%d/%Y"))
@@ -36,13 +41,41 @@ df_short <- df_short[df_short$Date < end_date, ]
 ```
 
 ```{r}
-df_short <- df_short %>% mutate(Wday = wday(df_short$Date)) # Add day of week column
-df_short <- df_short %>% mutate(Month = month(df_short$Date)) # Add month column
-df_short <- df_short %>% mutate(Year = year(df_short$Date)) # Add year column
+df_short <- df_short %>% mutate(Wday = wday(df_short$Date))
+df_short <- df_short %>% mutate(Month = month(df_short$Date))
+df_short <- df_short %>% mutate(Year = year(df_short$Date))
+head(mdy(sprintf("%d/01/%d",  df_short$Month, df_short$Year)))
 df_short <- df_short %>% mutate(DayMonth = mdy(sprintf("%d/01/%d",  Month, Year)))
 df_short <- df_short %>% mutate(MonthYear = format(Date, "%Y-%m"))
+df_short <- df_short %>% mutate(condensed_crimes = `Primary Type`)
 
-df_short <- as.data.frame(df_short)
+unique(df_short$`Primary Type`)
+df_categories = data.frame(category = c(replicate(15, "Costless Crime"), replicate(13, "Basic Crime"), replicate(3, "Extreme Crime")), 
+                           crime = c("CONCEALED CARRY LICENSE VIOLATION", "OBSCENITY", "PUBLIC INDECENCY", "NON-CRIMINAL", "DECEPTIVE PRACTICE", "GAMBLING", "PROSTITUTION", "NARCOTICS", "OTHER NARCOTIC VIOLATION", "INTERFERENCE WITH PUBLIC OFFICER", "INTIMIDATION", "LIQUOR LAW VIOLATION", "STALKING", "CRIMINAL TRESSPASS", "PUBLIC PEACE VIOLATION", "THEFT", "MOTOR VEHICLE THEFT", "ASSAULT", "ROBBERY", "BURGLARY", "BATTERY", "CRIMINAL DAMAGE", "KIDNAPPING", "OFFENSE INVOLVING CHILDREN", "SEX OFFENSE", "WEAPONS VIOLATION", "CRIMINAL SEXUAL ASSAULT", "OTHER OFFENSE", "ARSON", "HOMICIDE", "HUMAN TRAFFIKING"), 
+                           cost = c(replicate(15, 0), c(1000, 30000, 2000, 1000, 10000, 2000, 10000, 5000, 1000, 5000, 1000, 10000, 2000, 100000, 10000000, 1000000)))
+
+cat = c()
+cost = c()
+for (crime in df_short$`Primary Type`) {
+  cost = append(cost, df_categories$cost[df_categories$crime == crime])
+  cat = append(cat, df_categories$category[df_categories$crime == crime])
+}
+
+satest = c(1, 2, 3, 4)
+other = data.frame(letters = c("a", "b", "c", "d"), numbers = c(1, 2, 3, 4))
+
+new_test = c()
+for (num in test) {
+  new_test = append(new_test, other$letters[num == other$numbers])
+}
+new_test
+
+
+
+df_short <- df_short %>% mutate(category = replace(df_short, `Primary Type`, df_categories$category[df_categories$crime == `Primary Type`]))
+
+df_short <- df_short %>% mutate(category = replace(df_categories$cost[df_categories$crime == crime]) df_categories$category[df_categories$crime == `Primary Type`], 
+                                cost = df_categories$cost[df_categories$crime == `Primary Type`])
 ```
 ## Crime by DOTW bar
 ```{r}
@@ -107,21 +140,114 @@ for (community_area in community_areas) {
   }
 }
 
-################################################# here
+df_crimes_by_community_area_and_dates = df_crimes_by_community_area_and_dates %>% mutate(MonthYear = as.Date(paste0(df_crimes_by_community_area_and_dates$MonthYear, "-01"), format=("%Y-%m-%d")), community_area = as.factor(community_area))
 
-date = "2020-10"
-class(date)
-date = as.Date(date, format="%Y-%m")
-class(date)
-date
+df_crimes_by_community_area_and_dates
 
-ggplot(df_crimes_by_community_area_and_dates, aes(x = as.Date(MonthYear, format="%Y-%m"), y = number_of_crimes))
+ggplot(df_crimes_by_community_area_and_dates, aes(x = MonthYear, y = number_of_crimes, color = community_area), group = community_area) +
+  geom_line() +
+  ggtitle(paste0("Crimes over time by community area from ", start_date, " to ", end_date)) +
+  labs(color = "Community Area") +
+  xlab("Time") +
+  ylab("Number of Crimes") +
+  theme(legend.margin = margin(100, 1, 1, 1))
+```
+
+## Crimes by crime type
+```{r}
+categories = unique(df_short$`Primary Type`)
+
+categories
+df_crimes_by_type_timescale = data.frame(number_of_crimes = c(), date = c(), type_of_crime = c())
+
+for (category in categories) {
+  for (date in dates) {
+    new_row = data.frame(type = type, 
+                         date = date, 
+                         number_of_crimes = count(date == df_short$MonthYear & 
+                                                    type == df_short$`Primary Type`))
+    
+    df_crimes_by_type_timescale = rbind(df_crimes_by_type_timescale, new_row)
+  }
+}
+head(df_crimes_by_type_timescale)
+
+df_crimes_by_type_timescale = df_crimes_by_type_timescale %>% mutate(date = as.Date(paste0(date, "-01"), format=("%Y-%m-%d")), type = as.factor(type))
+
+ggplot(df_crimes_by_type_timescale, aes(x = date, y = number_of_crimes, group = type, color = type)) + 
+  geom_line() + 
+  ggtitle(paste0("Crimes over time by crime type area from ", start_date, " to ", end_date)) +
+  labs(color = "Crime Type") +
+  xlab("Time") +
+  ylab("Number of Crimes") +
+  theme(legend.margin = margin(100, 1, 1, 1))
+```
+
+## Crimes by type and community area
+```{r}
+## rohen you're going to have to run this code my computer is too slow
+
+df_crimes_by_type_and_community_area_timescale = c(date = c(), community_area = c(), type = c(), number_of_crimes = c())
+
+for (date in dates) {
+  for (type in types) {
+    for (community_area in community_areas) {
+      new_row = data.frame(date = date, type = type, 
+                           community_area = community_area, 
+                           number_of_crimes = count(date == df_short$MonthYear & 
+                                                      type == df_short$`Primary Type` & 
+                                                      community_area == df_short$`Community Area`))
+      df_crimes_by_type_and_community_area_timescale = rbind(df_crimes_by_type_and_community_area_timescale, new_row)
+    }
+  }
+}
+
+head(df_crimes_by_type_and_community_area_timescale)
+
+ggplot(df_crimes_by_type_and_community_area_timescale, aes(x = date, y = number_of_crimes, shape = community_area, color = type)) + 
+  geom_line() + 
+  ggtitle(paste0("Crimes over time by crime type and community area area from ", start_date, " to ", end_date)) +
+  labs(color = "Crime Type", shape = "Community Area") +
+  xlab("Time") +
+  ylab("Number of Crimes") +
+  theme(legend.margin = margin(100, 1, 1, 1))
+
+```
+
+## Crimes by location/socieconomics
+```{r}
+tail(housing_economics)
+number_of_crimes_by_community_area = data.frame(community_area = c(), number_of_crimes = c(), cost_of_crimes = c())
+for (community_area in community_areas) {
+  {
+    for (category in categories) {
+      new_row = data.frame(community_area = community_area, number_of_crimes = count(community_area == df_short$`Community Area`))
+      number_of_crimes_by_community_area= rbind(number_of_crimes_by_community_area, new_row)
+    }
+  }
+}
+data = data.frame(community_area = housing_economics$`Community Area Number`, crowded_housing = housing_economics$`PERCENT OF HOUSING CROWDED`)
+
+model = lm(number_of_crimes ~ :`Community`, data = data)
+
 ```
 
 
+
+
+
+
+
+
+
+
+
+
+
+## Useless <___>
 ```{r}
 temperature_data <- read_csv("data/Chicago area average temperature data.csv")
-temperature_data <- temperature_data %>% pivot_longer(!Year,   names_to = "month", values_to = "temp")
+temperature_data <- temperature_data %>% pivot_longer(!Year, names_to = "month", values_to = "temp")
 temperature_data <- temperature_data %>% mutate(DayMonth = mdy(sprintf("%s/01/%d",  month, Year)))
 ```
 
@@ -143,17 +269,6 @@ ggplot(crimes_by_temp_frame, aes(x = temps, y = crimes_by_temp)) +
     geom_smooth(method = "lm")
 temp_model <- lm(crimes_by_temp ~ temps, crimes_by_temp_frame)
 print(summary(temp_model))
-```
-
-```{r}
-community_areas <- 1:77
-for (area in community_areas) {
-  df_short[sprintf('comm_area_%d', area)] <- df_short$`Community Area` == area
-}
-```
-```{r}
-commarea_model <- lm(crimes_by_temp ~ temps + comm_area_1, crimes_by_temp_frame)
-print(summary(temp_model_commarea))
 ```
 
 
@@ -206,8 +321,8 @@ ggplot(crimes_by_temp_frame, aes(x = temps, y = crimes_by_temp)) +
     geom_smooth(method = "lm")
 temp_model <- lm(crimes_by_temp ~ temps, crimes_by_temp_frame)
 print(summary(temp_model))
-# ggplot(crimes_asians_frame, aes(x = log_asians, y = log_crimes)) +
-#   geom_point()
+ggplot(crimes_asians_frame, aes(x = log_asians, y = log_crimes)) +
+  geom_point()
 ```
 
 ```{r}
@@ -228,4 +343,3 @@ histogram(~date|`Community Area`, data=df_short,
 # ggplot(df_short, aes(x = Date, y=`Community Area`)) +
 #   geom_point()
 ```
-
