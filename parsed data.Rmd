@@ -124,6 +124,65 @@ date_model <- lm(crimes_by_date ~ dates, crimes_by_date_frame)
 print(summary(date_model))
 ```
 
+## Crime proportions
+
+```{r}
+crime_counts = data.frame(count(df_short, df_short$`Primary Type`))
+crime_counts %<>% rename(type_of_crime = df_short..Primary.Type., number_of_crimes = n) %>% mutate(prop = number_of_crimes / sum(number_of_crimes) *100) %>% arrange(desc(prop))
+crime_counts_short = head(arrange(crime_counts, desc(prop)), 10)
+crime_counts_short %<>% arrange(desc(prop))
+other = data.frame(type_of_crime = "Other", number_of_crimes = sum(crime_counts$number_of_crimes[11:nrow(crime_counts)]), prop = sum(crime_counts$prop[11:nrow(crime_counts)]))
+crime_counts_short = rbind(crime_counts_short, other)
+#pie(crime_counts$number_of_crimes, labels = crime_counts$type_of_crime)
+ggplot(crime_counts_short, aes(x = "", y = prop, fill = reorder(type_of_crime, -prop))) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0) +
+  theme_void() +
+  scale_fill_brewer(palette="Spectral") + 
+  labs(title = paste0("Crime proportions from ", start_date, " to ", end_date))
+
+ggplot(crime_counts, aes(x = "", y = prop, fill = reorder(type_of_crime, -prop))) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0) +
+  theme_void() +
+  scale_fill_brewer(palette="Spectral") + 
+  labs(title = paste0("Crime proportions from ", start_date, " to ", end_date))
+```
+
+
+## Housing costs by community area
+```{r}
+qx_to_md <- function(quarters) {
+  output = c()
+  quarters_dates = data.frame(quarters = c("Q1", "Q2", "Q3", "Q4"), dates = c("2/15", "5/15", "8/15", "11/15"))
+  for (input_quarter in quarters) {
+    for (quarter in quarters_dates$quarters) {
+      if (input_quarter == quarter) {
+        output = append(output, quarters_dates$dates[quarters_dates$quarter == quarter])
+      }
+    }
+  }
+  return(output)
+}
+
+submarket_definitions = read_csv("C:/Users/Kaeshev_Alapati/OneDrive - Cary Academy/Staculus/submarket definitions.csv")
+quarterly_values = read_csv("C:/Users/Kaeshev_Alapati/OneDrive - Cary Academy/Staculus/2022_q2_price_index_data.csv")
+first_row = quarterly_values[1, ]
+quarterly_values = quarterly_values[-1, ]
+colnames(quarterly_values) = first_row
+head(quarterly_values)
+quarterly_values %<>% rename(date = YEARQ) %>% 
+  mutate(year =  sub('.{2}$', '', date)) %>% 
+  mutate(quarter = sub('.{4}', '', date)) %>% 
+  mutate(quarter = qx_to_md(quarter)) %>% 
+  mutate(date = as.Date(paste0(year, "/", quarter), format = "%Y/%m/%d")) %>% 
+  select(-year, -quarter)
+
+head(quarterly_values)
+
+```
+
+
 ## Crimes by community area
 ```{r}
 community_areas = 1:77
