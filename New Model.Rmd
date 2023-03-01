@@ -26,8 +26,8 @@ crimes <- data.table::fread("data/Crimes_-_2001_to_Present.csv") # Faster than r
 start_date <- "2020-1-1"
 end_date <- "2022-12-31"
 
-df_short <- crimes %>% select(Date, "Community Area", IUCR, "FBI Code") # Select desired columns
-df_short <- df_short %>% rename(Community_Area = "Community Area", FBI_Code = "FBI Code")
+df_short <- crimes %>% select(Date, "Community Area", IUCR, "FBI Code", "Primary Type", Description) # Select desired columns
+df_short <- df_short %>% rename(Community_Area = "Community Area", FBI_Code = "FBI Code", Primary_Type = "Primary Type", Secondary_Type = Description)
 
 df_short %<>%
   mutate(Date = sub('.{12}$', '', df_short$Date)) %>% # idk kaeshev can u comment this
@@ -165,6 +165,34 @@ df_short <- df_short %>% merge(housing, "Community_Area")
 # )
 ```
 
+# costs
+```{r}
+
+crime_costs_prim_match <- read_csv("data/Crime Costs (Primary Type Matched).csv") # Crime costs for crimes indexed by their Primary Type
+crime_costs_IUCR_match <- read_csv("data/Crime Costs (IUCR Matched).csv") # Crime costs for crimes indexed by IUCRs
+crime_costs_IUCR_match$IUCR %<>% as.character()
+
+df_short %<>%
+  merge(crime_costs_prim_match, by="Primary_Type", all = TRUE) %>%
+  merge(crime_costs_IUCR_match, by="IUCR", all = TRUE)
+
+# Get rid of duplicates...
+df_short %<>% mutate(
+  Crime_Career_Cost =               coalesce(df_short$`Crime Victim Cost.x`,               df_short$`Crime Victim Cost.y`),
+  Criminal_Justice_System_Cost =    coalesce(df_short$`Criminal Justice System Cost.x`,    df_short$`Criminal Justice System Cost.y`),
+  Crime_Career_Cost =               coalesce(df_short$`Crime Career Cost.x`,               df_short$`Crime Career Cost.y`),
+  Total_Tangible_Cost =             coalesce(df_short$`Total Tangible Cost.x`,             df_short$`Total Tangible Cost.y`),
+  Pain_And_Suffering_Cost =         coalesce(df_short$`Pain and Suffering Cost.x`,         df_short$`Pain and Suffering Cost.y`),
+  Risk_Of_Homicide_Cost =           coalesce(df_short$`Corrected Risk-of-Homicide Cost.x`, df_short$`Corrected Risk-of-Homicide Cost.y`),
+  Total_Intangible_Cost =           coalesce(df_short$`Total Intangible Cost.x`,           df_short$`Total Intangible Cost.y`),
+  Total_Total_Cost =                coalesce(df_short$`Total Total Cost.x`,                df_short$`Total Total Cost.y`),
+  Total_Included_Cost =             coalesce(df_short$`Total Included Cost.x`,             df_short$`Total Included Cost.y`)
+) %>%
+  select(-c(`Crime Victim Cost.x`, `Crime Victim Cost.y`, `Criminal Justice System Cost.x`, `Criminal Justice System Cost.y`, `Crime Career Cost.x`, `Crime Career Cost.y`, `Total Tangible Cost.x`, `Total Tangible Cost.y`, `Pain and Suffering Cost.x`, `Pain and Suffering Cost.y`, `Corrected Risk-of-Homicide Cost.x`, `Corrected Risk-of-Homicide Cost.y`, `Total Intangible Cost.x`, `Total Intangible Cost.y`, `Total Total Cost.x`, `Total Total Cost.y`, `Total Included Cost.x`, `Total Included Cost.y`))
+
+df_short <- df_short[!is.na(df_short$Total_Included_Cost),] # Remove ignored crimes (~15.54% of dataset)
+```
+
 # save
 ```{r}
 save(df_short, file = "data/df_short.Rdata")
@@ -173,7 +201,7 @@ save(df_short, file = "data/df_short.Rdata")
 # Models
 ## Get data
 ```{r}
-parsed_data <- df_short %>% count(temp, DayMonth, Community_Area, Average_ACT_Community, Average_College_Enrollment_Community, Asian_Proportion_Community, Black_Proportion_Community, Hispanic_Proportion_Community, Multi_Proportion_Community, White_Proportion_Community, English_Learners_Proportion_Community, Low_Income_Proportion_Community, Total_Asian_Count_Community, Total_Black_Count_Community, Total_Hispanic_Count_Community, Total_Multi_Count_Community, Total_White_Count_Community, Total_English_Learners_Count_Community, Total_Low_Income_Count_Community, Total_Student_Count_Community,                                  Property_Type, Total_Units_Property_Community)
+parsed_data <- df_short %>% count(temp, DayMonth, Community_Area, Average_ACT_Community, Average_College_Enrollment_Community, Asian_Proportion_Community, Black_Proportion_Community, Hispanic_Proportion_Community, Multi_Proportion_Community, White_Proportion_Community, English_Learners_Proportion_Community, Low_Income_Proportion_Community, Total_Asian_Count_Community, Total_Black_Count_Community, Total_Hispanic_Count_Community, Total_Multi_Count_Community, Total_White_Count_Community, Total_English_Learners_Count_Community, Total_Low_Income_Count_Community, Total_Student_Count_Community, Property_Type, Total_Units_Property_Community)
 ```
 Dummies
 ```{r}
