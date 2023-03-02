@@ -12,6 +12,7 @@ library(tigerstats)
 library(lattice)
 library(lubridate)
 library(geojsonR)
+library(magrittr)
 #crime_data <- read.csv.sql("C:\\Users\\Kaeshev_Alapati\\Downloads\\Crimes_-_2001_to_Present.csv",
 #                           sql = "select * from file where `Date` > 2021", eol = "\n")
 # 
@@ -32,7 +33,7 @@ end_date = "2022-12-31"
 
 
 df_short <- df %>%
-  select(Date, "Community Area", "Primary Type")
+  select(Date, "Community Area", "Primary Type", "IUCR")
 df_short <- df_short %>%
   mutate(Date = sub('.{12}$', '', df_short$Date)) %>%
   mutate(Date = as.Date(Date, format = "%m/%d/%Y"))
@@ -48,34 +49,37 @@ head(mdy(sprintf("%d/01/%d",  df_short$Month, df_short$Year)))
 df_short <- df_short %>% mutate(DayMonth = mdy(sprintf("%d/01/%d",  Month, Year)))
 df_short <- df_short %>% mutate(MonthYear = format(Date, "%Y-%m"))
 df_short <- df_short %>% mutate(condensed_crimes = `Primary Type`)
+df_short <- df_short %>% mutate(Primary_Type = `Primary Type`)
 
-unique(df_short$`Primary Type`)
-df_categories = data.frame(category = c(replicate(15, "Costless Crime"), replicate(13, "Basic Crime"), replicate(3, "Extreme Crime")), 
-                           crime = c("CONCEALED CARRY LICENSE VIOLATION", "OBSCENITY", "PUBLIC INDECENCY", "NON-CRIMINAL", "DECEPTIVE PRACTICE", "GAMBLING", "PROSTITUTION", "NARCOTICS", "OTHER NARCOTIC VIOLATION", "INTERFERENCE WITH PUBLIC OFFICER", "INTIMIDATION", "LIQUOR LAW VIOLATION", "STALKING", "CRIMINAL TRESSPASS", "PUBLIC PEACE VIOLATION", "THEFT", "MOTOR VEHICLE THEFT", "ASSAULT", "ROBBERY", "BURGLARY", "BATTERY", "CRIMINAL DAMAGE", "KIDNAPPING", "OFFENSE INVOLVING CHILDREN", "SEX OFFENSE", "WEAPONS VIOLATION", "CRIMINAL SEXUAL ASSAULT", "OTHER OFFENSE", "ARSON", "HOMICIDE", "HUMAN TRAFFIKING"), 
-                           cost = c(replicate(15, 0), c(1000, 30000, 2000, 1000, 10000, 2000, 10000, 5000, 1000, 5000, 1000, 10000, 2000, 100000, 10000000, 1000000)))
-
-cat = c()
-cost = c()
-for (crime in df_short$`Primary Type`) {
-  cost = append(cost, df_categories$cost[df_categories$crime == crime])
-  cat = append(cat, df_categories$category[df_categories$crime == crime])
-}
-
-satest = c(1, 2, 3, 4)
-other = data.frame(letters = c("a", "b", "c", "d"), numbers = c(1, 2, 3, 4))
-
-new_test = c()
-for (num in test) {
-  new_test = append(new_test, other$letters[num == other$numbers])
-}
-new_test
-
-
-
-df_short <- df_short %>% mutate(category = replace(df_short, `Primary Type`, df_categories$category[df_categories$crime == `Primary Type`]))
-
-df_short <- df_short %>% mutate(category = replace(df_categories$cost[df_categories$crime == crime]) df_categories$category[df_categories$crime == `Primary Type`], 
-                                cost = df_categories$cost[df_categories$crime == `Primary Type`])
+# unique(df_short$`Primary Type`)
+# df_categories = data.frame(category = c(replicate(15, "Costless Crime"), replicate(13, "Basic Crime"), replicate(3, "Extreme Crime")), 
+#                            crime = c("CONCEALED CARRY LICENSE VIOLATION", "OBSCENITY", "PUBLIC INDECENCY", "NON-CRIMINAL", "DECEPTIVE PRACTICE", "GAMBLING", "PROSTITUTION", "NARCOTICS", "OTHER NARCOTIC VIOLATION", "INTERFERENCE WITH PUBLIC OFFICER", "INTIMIDATION", "LIQUOR LAW VIOLATION", "STALKING", "CRIMINAL TRESSPASS", "PUBLIC PEACE VIOLATION", "THEFT", "MOTOR VEHICLE THEFT", "ASSAULT", "ROBBERY", "BURGLARY", "BATTERY", "CRIMINAL DAMAGE", "KIDNAPPING", "OFFENSE INVOLVING CHILDREN", "SEX OFFENSE", "WEAPONS VIOLATION", "CRIMINAL SEXUAL ASSAULT", "OTHER OFFENSE", "ARSON", "HOMICIDE", "HUMAN TRAFFIKING"), 
+#                            cost = c(replicate(15, 0), c(1000, 30000, 2000, 1000, 10000, 2000, 10000, 5000, 1000, 5000, 1000, 10000, 2000, 100000, 10000000, 1000000)))
+# df_categories
+# cat = c()
+# cost = c()
+# for (crime in df_short$`Primary Type`) {
+#   cost = append(cost, df_categories$cost[df_categories$crime == crime])
+#   cat = append(cat, df_categories$category[df_categories$crime == crime])
+# }
+# 
+# df_short$cost <- df_categories$cost %>% group_by(df_categories$crime)
+# 
+# satest = c(1, 2, 3, 4)
+# other = data.frame(letters = c("a", "b", "c", "d"), numbers = c(1, 2, 3, 4))
+# 
+# new_test = c()
+# for (num in test) {
+#   new_test = append(new_test, other$letters[num == other$numbers])
+# }
+# new_test
+# 
+# 
+# 
+# df_short <- df_short %>% mutate(category = replace(df_short, `Primary Type`, df_categories$category[df_categories$crime == `Primary Type`]))
+# 
+# df_short <- df_short %>% mutate(category = replace(df_categories$cost[df_categories$crime == crime]) df_categories$category[df_categories$crime == `Primary Type`], 
+#                                 cost = df_categories$cost[df_categories$crime == `Primary Type`])
 ```
 ## Crime by DOTW bar
 ```{r}
@@ -133,20 +137,14 @@ crime_counts_short = head(arrange(crime_counts, desc(prop)), 10)
 crime_counts_short %<>% arrange(desc(prop))
 other = data.frame(type_of_crime = "Other", number_of_crimes = sum(crime_counts$number_of_crimes[11:nrow(crime_counts)]), prop = sum(crime_counts$prop[11:nrow(crime_counts)]))
 crime_counts_short = rbind(crime_counts_short, other)
-#pie(crime_counts$number_of_crimes, labels = crime_counts$type_of_crime)
+
 ggplot(crime_counts_short, aes(x = "", y = prop, fill = reorder(type_of_crime, -prop))) +
   geom_bar(stat="identity", width=1, color="white") +
   coord_polar("y", start=0) +
   theme_void() +
   scale_fill_brewer(palette="Spectral") + 
-  labs(title = paste0("Crime proportions from ", start_date, " to ", end_date))
-
-ggplot(crime_counts, aes(x = "", y = prop, fill = reorder(type_of_crime, -prop))) +
-  geom_bar(stat="identity", width=1, color="white") +
-  coord_polar("y", start=0) +
-  theme_void() +
-  scale_fill_brewer(palette="Spectral") + 
-  labs(title = paste0("Crime proportions from ", start_date, " to ", end_date))
+  labs(title = paste0("Crime Proportions From ", start_date, " to ", end_date)) + 
+  labs(fill = "Type of Crime")
 ```
 
 
@@ -181,7 +179,89 @@ quarterly_values %<>% rename(date = YEARQ) %>%
 head(quarterly_values)
 
 ```
+# costs
+```{r}
+crime_costs_prim_match <- read_csv("C:/Users/Kaeshev_Alapati/OneDrive - Cary Academy/Staculus/Crime Costs (Primary Type Matched).csv") # Crime costs for crimes indexed by their Primary Type
+crime_costs_IUCR_match <- read_csv("C:/Users/Kaeshev_Alapati/OneDrive - Cary Academy/Staculus/Crime Costs (IUCR Matched).csv") # Crime costs for crimes indexed by IUCRs
+crime_costs_IUCR_match$IUCR %<>% as.character()
+df_short %<>%
+  merge(crime_costs_prim_match, by="Primary_Type", all = TRUE) %>%
+  merge(crime_costs_IUCR_match, by="IUCR", all = TRUE)
+# Get rid of duplicates...
+df_short %<>% mutate(
+  Crime_Career_Cost =               coalesce(df_short$`Crime Victim Cost.x`,               df_short$`Crime Victim Cost.y`),
+  Criminal_Justice_System_Cost =    coalesce(df_short$`Criminal Justice System Cost.x`,    df_short$`Criminal Justice System Cost.y`),
+  Crime_Career_Cost =               coalesce(df_short$`Crime Career Cost.x`,               df_short$`Crime Career Cost.y`),
+  Total_Tangible_Cost =             coalesce(df_short$`Total Tangible Cost.x`,             df_short$`Total Tangible Cost.y`),
+  Pain_And_Suffering_Cost =         coalesce(df_short$`Pain and Suffering Cost.x`,         df_short$`Pain and Suffering Cost.y`),
+  Risk_Of_Homicide_Cost =           coalesce(df_short$`Corrected Risk-of-Homicide Cost.x`, df_short$`Corrected Risk-of-Homicide Cost.y`),
+  Total_Intangible_Cost =           coalesce(df_short$`Total Intangible Cost.x`,           df_short$`Total Intangible Cost.y`),
+  Total_Total_Cost =                coalesce(df_short$`Total Total Cost.x`,                df_short$`Total Total Cost.y`),
+  Total_Included_Cost =             coalesce(df_short$`Total Included Cost.x`,             df_short$`Total Included Cost.y`)
+) %>%
+  select(-c(`Crime Victim Cost.x`, `Crime Victim Cost.y`, `Criminal Justice System Cost.x`, `Criminal Justice System Cost.y`, `Crime Career Cost.x`, `Crime Career Cost.y`, `Total Tangible Cost.x`, `Total Tangible Cost.y`, `Pain and Suffering Cost.x`, `Pain and Suffering Cost.y`, `Corrected Risk-of-Homicide Cost.x`, `Corrected Risk-of-Homicide Cost.y`, `Total Intangible Cost.x`, `Total Intangible Cost.y`, `Total Total Cost.x`, `Total Total Cost.y`, `Total Included Cost.x`, `Total Included Cost.y`))
+df_short <- df_short[!is.na(df_short$Total_Included_Cost),] # Remove ignored crimes (~15.54% of dataset)
+```
+## Cost Breakdown:
+```{r}
+crime_costs = data.frame(aggregate(Total_Included_Cost ~ Primary_Type , df_short, sum))
+crime_costs %<>% mutate(prop = Total_Included_Cost / sum(Total_Included_Cost) * 100) %>% arrange(desc(prop))
+crime_costs_short = head(crime_costs, 10)
+other = data.frame(Primary_Type = "Other", Total_Included_Cost = sum(crime_costs$Total_Included_Cost[11:nrow(crime_costs)]), prop = sum(crime_costs$prop[11:nrow(crime_costs)]))
+crime_costs_short %<>% rbind(other)
+crime_costs_short
 
+ggplot(crime_costs_short, aes(x = "", y = prop, fill = reorder(Primary_Type, -prop))) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0) +
+  theme_void() +
+  scale_fill_brewer(palette="Spectral") + 
+  labs(title = paste0("Crime Cost Proportions From ", start_date, " to ", end_date)) + 
+  labs(fill = "Type of Crime")
+
+```
+## Cost timescale by crimes
+```{r}
+dates <- format(seq(as.Date(start_date), as.Date(end_date), by="months"), "%Y-%m")
+crime_types <- unique(df_short$Primary_Type)
+comm_date = aggregate(Total_Included_Cost ~ Primary_Type + MonthYear, data = df_short, FUN=sum)
+comm_date %<>% rename(date = MonthYear)
+comm_date %<>% mutate(Primary_Type = as.factor(Primary_Type))
+comm_date %<>% mutate(date = as.Date(paste0(date, "-01"), format = "%Y-%m-%d"))
+
+ggplot(comm_date, aes(x=date, y=Total_Included_Cost, group=Primary_Type, color=reorder(Primary_Type, -Total_Included_Cost))) +
+  geom_line() + 
+  labs(title = paste0("The Costs of Crimes From ", start_date, " to ", end_date)) + 
+  labs(color = "Type of Crime") +
+  xlab("Date") +
+  ylab("Cost to Chicago's Society ($)")
+
+ggplot(comm_date, aes(x=date, y=log(Total_Included_Cost), group=Primary_Type, color=reorder(Primary_Type, -Total_Included_Cost))) +
+  geom_line() + 
+  labs(title = paste0("Logged Costs of Crimes From ", start_date, " to ", end_date)) + 
+  labs(color = "Type of Crime") + 
+  xlab("Date") + 
+  ylab("Logged Cost to Chicago's Society ($)")
+  
+  
+```
+## Crime Cost House Cost model
+```{r}
+
+
+```
+
+## number of crimes timescale
+```{r}
+crimes_over_time = count(df_short, Date, `Primary Type`)
+
+types = unique(comm_date$`Primary_Type`)
+
+crimes_over_time %<>% filter(is.element(`Primary Type`, types))
+
+ggplot(crimes_over_time, aes(x=Date, y=n, group = `Primary Type`, color = reorder(`Primary Type`, -n))) + 
+  geom_line()
+```
 
 ## Crimes by community area
 ```{r}
