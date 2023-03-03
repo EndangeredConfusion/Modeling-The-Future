@@ -1,0 +1,69 @@
+---
+title: "Parse Submarket"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(magrittr)
+library(plyr)
+```
+```{r}
+df_submarket <- read_csv("data/submarket_definitions.csv")
+df_submarket %<>% head(length(df_submarket$`Sub Market`)-2)
+df_submarket %>% select(-Number)
+```
+```{r}
+df_commareas <- read_csv("data/CommAreas.csv")
+communities <- unique(df_commareas$COMMUNITY)
+rm(df_commareas)
+```
+
+```{r}
+entirely_split <- df_submarket$`Municipalities or Chicago Community Areas Entirely Within*` %>% tapply(df_submarket$`Sub Market`, str_split_1, ",")
+entirely_enclosed <- data.frame(Submarket=c(), Area=c())
+for (i in seq_along(entirely_split)) {
+  market_name <- rownames(entirely_split)[i]
+  areas <- entirely_split[i]
+  entirely_enclosed %<>% rbind(data.frame(Submarket = market_name, Area = unlist(areas)))
+}
+entirely_enclosed$Area %<>% sapply(trimws, simplify = "array")
+entirely_enclosed <- entirely_enclosed[toupper(entirely_enclosed$Area) %in% communities,]
+rm(i, market_name, areas, entirely_split)
+```
+
+```{r}
+mostly_split <- df_submarket$`Municipalities or Chicago Community Areas Mostly Within`
+mostly_split[is.na(mostly_split)] <- ""
+mostly_split %<>% tapply(df_submarket$`Sub Market`, str_split_1, ",")
+
+mostly_enclosed <- data.frame(Submarket=c(), Area=c())
+for (i in seq_along(mostly_split)) {
+  market_name <- rownames(mostly_split)[i]
+  areas <- mostly_split[i]
+  mostly_enclosed %<>% rbind(data.frame(Submarket = market_name, Area = unlist(areas)))
+}
+mostly_enclosed$Area %<>% sapply(trimws, simplify = "array")
+mostly_enclosed <- mostly_enclosed[toupper(mostly_enclosed$Area) %in% communities,]
+
+mostly_enclosed %<>% rbind(entirely_enclosed)
+rm(i, market_name, areas, mostly_split)
+```
+
+```{r}
+marginally_split <- df_submarket$`Municipalities or Chicago Community Areas Marginally Within`
+marginally_split[is.na(marginally_split)] <- ""
+marginally_split %<>% tapply(df_submarket$`Sub Market`, str_split_1, ",")
+
+marginally_enclosed <- data.frame(Submarket=c(), Area=c())
+for (i in seq_along(marginally_split)) {
+  market_name <- rownames(marginally_split)[i]
+  areas <- marginally_split[i]
+  marginally_enclosed %<>% rbind(data.frame(Submarket = market_name, Area = unlist(areas)))
+}
+marginally_enclosed$Area %<>% sapply(trimws, simplify = "array")
+marginally_enclosed <- marginally_enclosed[toupper(marginally_enclosed$Area) %in% communities,]
+
+marginally_enclosed %<>% rbind(mostly_enclosed)
+rm(i, market_name, areas, marginally_split)
+```

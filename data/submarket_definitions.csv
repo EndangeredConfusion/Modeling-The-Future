@@ -1,0 +1,36 @@
+Number,Sub Market,Municipalities or Chicago Community Areas Entirely Within*,Municipalities or Chicago Community Areas Mostly Within,Municipalities or Chicago Community Areas Marginally Within
+03401,Palatine/Barrington,"Palatine, Inverness, South Barrington","Rolling Meadows, Barrington, Barrington Hills",Hoffman Estates
+03407,Melrose Park/Maywood,"Maywood, Bellwood, Westchester, Forest Park, LaGrange Park, River Forest, Riverside,Hillside, Broadview, North Riverside, Berkeley","Melrose Park, Brookfield",Northlake
+03408,Oak Park/Cicero,"Cicero, Berwyn, Oak Park",,
+03409,LaGrange/Burbank,"Burbank, LaGrange, Western Springs, Justice, Summit, Lyons, Stickney, Countryside, Hodgkins, Forest View, Bedford Park, McCook","Bridgeview, Willow Springs",Brookfield
+03410,Orland Park/Lemont,"Orland Park, Palos Hills, Lemont, Palos Park","Tinley Park, Hickory Hills","Bridgeview, Palos Heights"
+03411,Oak Lawn/Blue Island,"Oak Lawn, Evergreen Park, Alsip, Chicago Ridge, Calumet Park, Hometown","Blue Island, Worth","Riverdale, Palos Heights, Crestwood"
+03412,Oak Forest/Country Club Hills,"Oak Forest, Midlothian","Country Club Hills, Hazel Crest, Markham, Crestwood, Posen, Robbins","Tinley Park, Blue Island"
+03413,Calumet City/Harvey,"Calumet City, Harvey, Dolton, South Holland, Burnham, Dixmoor, Thornton, East Hazel Crest","Lansing, Riverdale","Homewood, Markham"
+03414,Chicago Heights/Park Forest,"Chicago Heights, Park Forest, Matteson, Richton Park, Sauk Village, Flossmoor, Lynwood, Glenwood, Olympia Fields, South Chicago Heights, Ford Heights",Steger,"Tinley Park, Lansing, Homewood, Country Club Hills"
+03415,Arlington Heights/Wheeling,"Wheeling, Prospect Heights",Arlington Heights,Mount Prospect
+03416,Winnetka/Northbrook,"Glenview, Northbrook, Wilmette, Winnetka, Glencoe, Northfield, Kenilworth",,
+03417,Hoffman Estates/Streamwood,Streamwood,Hoffman Estates,"Elgin, Bartlett, Hanover Park"
+03418,Schaumburg,Schaumburg,,"Hoffman Estates, Hanover Park, Elk Grove Village"
+03419,Mount Prospect/Elk Grove Village,Elk Grove Village,Mount Prospect,"Arlington Heights, Des Plaines, Rolling Meadows"
+03420,Park Ridge/Des Plaines,"Park Ridge, EDISON PARK","Des Plaines, NORWOOD PARK","Glenview, Niles, Morton Grove"
+03421,Evanston/Skokie,"Evanston, Skokie, Lincolnwood, Golf",Morton Grove,"Glenview, Niles"
+03422,Elmwood Park/Franklin Park,"Elmwood Park, Franklin Park, Norridge, Schiller Park, River Grove, Harwood Heights, Rosemont, OHARE",Northlake,Melrose Park
+03501,Chicago--Uptown/Rogers Park,"Edgewater, Uptown, Rogers Park",,
+03502,Chicago--Lake View/Lincoln Park,"Lake View, Lincoln Park",,
+03503,Chicago--Lincoln Square/North Center,"West Ridge, Lincoln Square, North Center",,
+03504,Chicago--Irving Park/Albany Park,"Irving Park, Albany Park, Forest Glen, North Park",,
+03520,Chicago--Portage Park/Jefferson Park,"Portage Park, Dunning, Jefferson Park",,
+03521,Chicago--Austin/Belmont Cragin,"Austin, Belmont Cragin, Montclare",,
+03522,Chicago--Logan Square/Avondale,"Logan Square, Avondale, Hermosa",,
+03523,Chicago--Humboldt Park/Garfield Park,"South Lawndale, Humboldt Park, North Lawndale, East Garfield Park, West Garfield Park",,
+03524,Chicago--West Town/Near West Side,"West Town, Near West Side, Lower West Side",,
+03526,Chicago--Bridgeport/Brighton Park,"Brighton Park, New City, Bridgeport, McKinley Park, Archer Heights, Armour Square",,
+03527,Chicago--Gage Park/West Lawn,"Gage Park, Garfield Ridge, West Lawn, Clearing, West Elsdon",,
+03528,Chicago--Englewood/Greater Grand Crossing,"Chicago Lawn, West Englewood, Greater Grand Crossing, Englewood",,
+03529,Chicago--Bronzeville/Hyde Park,"South Shore, Woodlawn, Hyde Park, Grand Boulevard, Douglas, Kenwood, Washington Park, Oakland, Fuller Park",,
+03530,Chicago--Beverly/Morgan Park,"Ashburn, Washington Heights, Morgan Park, Beverly, Mount Greenwood",,
+03531,Chicago--Auburn Gresham/Chatham,"Auburn Gresham, Roseland, Chatham, Avalon Park, Burnside",,
+03532,Chicago--South Chicago/West Pullman,"South Chicago, West Pullman, East Side, South Deering, Calumet Heights, Hegewisch, Pullman, Riverdale",,
+,,,,
+*PUMAs 3420 and 3422 include parts of the City of Chicago,,,,
