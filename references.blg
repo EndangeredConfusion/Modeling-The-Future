@@ -1,0 +1,138 @@
+@article{10.1001/jamanetworkopen.2022.48132,
+    author = {del Pozo, Brandon and Knorre, Alex and Mello, Michael J. and Chalfin, Aaron},
+    title = "{Comparing Risks of Firearm-Related Death and Injury Among Young Adult Males in Selected US Cities With Wartime Service in Iraq and Afghanistan}",
+    journal = {JAMA Network Open},
+    volume = {5},
+    number = {12},
+    pages = {e2248132-e2248132},
+    year = {2022},
+    month = {12},
+    issn = {2574-3805},
+    doi = {10.1001/jamanetworkopen.2022.48132},
+    url = {https://doi.org/10.1001/jamanetworkopen.2022.48132},
+    eprint = {https://jamanetwork.com/journals/jamanetworkopen/articlepdf/2799859/del\_pozo\_2022\_oi\_221360\_1671050393.00525.pdf},
+}
+
+@online{Tkachenko,
+  author = {Tymur Tkachenko, Rohen Giralt, Jared Cooper},
+  title = "What is a Tuning Fork: Forks that tune or tunes that fork?",
+  year = "2022",
+  url = "https://caryacademy-my.sharepoint.com/:p:/g/personal/tymur_tkachenko_caryacademy_org/Ea9lfS25lWRKtaizKjfojpABaR-fmeP0jPitDeOijha3oA?e=2pmMh5"
+}
+
+@online{CPD-staffing,
+  author = {Dana Rebik, Eli Ong},
+  title = "‘The bad guys already know:’ CPD staffing shortages affect public safety",
+  year = "2022",
+  url = "https://wgntv.com/news/chicago-news/the-bad-guys-already-know-cpd-staffing-shortages-affect-public-safety/"
+}
+
+@online{cbs-policing,
+  title = "Burnout And Low Turnout Of Applicants Leaving CPD With Officer Shortage; 'People Don't Want To Be The Police'",
+  year = "2021",
+  url = "https://www.cbsnews.com/chicago/news/chicago-police-department-manpower-shortage-burnout-retirements-low-applications/"
+}
+
+@article{covid-homicides,
+  author = {Thomas Fuller, Tim Arango},
+  title = "Police Pin a Rise in Murders on an Unusual Suspect: Covid",
+  year = "2020",
+  url = "https://www.nytimes.com/2020/10/29/us/coronavirus-murders.html"
+}
+
+@misc{crimes,
+  title = "Crimes - 2001 to Present",
+  url = "https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-Present/ijzp-q8t2"
+}
+
+@article{aff-housing,
+  author = "Steve Cain",
+  title = "The Housing Affordability Problem in Chicago",
+  url = "https://www.rpbg.org/index.php/latest/news/240-affordability-crisis"
+}
+
+@article{aff-housing-dec,
+  author = "Blair Paddock",
+  title = "Study: City Sees Decline in Affordable Housing",
+  url = "https://news.wttw.com/2021/10/06/study-city-sees-decline-affordable-housing"
+}
+
+@online{data,
+  title = "Chicago Data Portal",
+  url = "https://data.cityofchicago.org/"
+}
+
+@article{costs,
+  author = {Kathryn E. McCollister, Michael T. French, Hai Fang},
+  title = "The Cost of Crime to Society: New Crime-Specific Estimates for Policy and Program Evaluation",
+  url = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2835847/#!po=35.7843"
+}
+
+@online{costs-nar,
+  author = {A.S. Rajkumar, M.T. French},
+  title = "Rajkumar, A. S., and French, M. T. (1997). Drug abuse, crime costs, and the economic benefits of treatment.",
+  url = "https://sci-hub.se/https://link.springer.com/article/10.1007/BF02221094",
+  year = "1997"
+}
+
+@online{DEA,
+  title = "Drug Fact Sheet",
+  author = "Drug Enforcement Administration",
+  url = "https://www.dea.gov/sites/default/files/2020-06/Narcotics-2020.pdf",
+  year = "2020"
+}
+
+@article{burnett,
+  author = "Sara Burnett",
+  title = "Chicago Mayor Lightfoot ousted; Vallas, Johnson in runoff",
+  url = "https://apnews.com/article/chicago-mayor-election-2023-73b7ffa6da2ad2f301674c5c23e08560",
+  year = "2023"
+}
+
+@online{officers,
+  title = "Sworn CPD Members",
+  url = "https://informationportal.igchicago.org/chicago-police-department-active-sworn-officer-overview/"
+}
+
+@online{cpd-spending,
+  title = "Spending on Public Safety in the City of Chicago FY2023",
+  url = "https://www.civicfed.org/civic-federation/blog/spending-public-safety-city-chicago-fy2023-proposed-budget",
+  year = "2022"
+}
+
+@article{aff-housing-crime-rates,
+  title = "Affordable housing decreases crime, increases property values",
+  url = "https://socialecology.uci.edu/news/affordable-housing-decreases-crime-increases-property-values"
+}
+
+@online{housing-developments,
+  title = "Affordable Rental Housing Developments",
+  url = "https://data.cityofchicago.org/Community-Economic-Development/Affordable-Rental-Housing-Developments/s6ha-ppgi"
+}
+
+@article{rental-crime,
+  author = "Terance J. Rephann",
+  title = "Rental Housing and Crime: The Role of Property Ownership and Management",
+  url = "https://vig.coopercenter.org/sites/vig/files/crime_paper.pdf"
+}
+
+@article{rentals,
+  title = "2021 State of Rental Housing in Cook County",
+  url = "https://www.housingstudies.org/releases/state-rental-2021/",
+  year = "2021"
+}
+
+@online{socioeconomics,
+  title = "Census Data - Selected socioeconomic indicators in Chicago, 2008 – 2012",
+  url = "https://data.cityofchicago.org/Health-Human-Services/Census-Data-Selected-socioeconomic-indicators-in-C/kn9c-c2s2"
+}
+
+@online{ARO,
+  title = "Affordable Requirements Ordinance (ARO)",
+  url = "https://www.chicago.gov/city/en/depts/doh/provdrs/developers/svcs/aro.html"
+}
+
+@online{SRO,
+  title = "SRO Preservation Initiative",
+  url = "https://www.chicago.gov/city/en/depts/doh/provdrs/developers/svcs/sro-preservation-initiative.html"
+}
