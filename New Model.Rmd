@@ -23,7 +23,7 @@ crimes <- data.table::fread("data/Crimes_-_2001_to_Present.csv") # Faster than r
 
 ```{r}
 
-start_date <- "2020-1-1"
+start_date <- "2001-1-1"
 end_date <- "2022-12-31"
 
 df_short <- crimes %>% select(Date, "Community Area", IUCR, "FBI Code", "Primary Type", Description) # Select desired columns
@@ -99,14 +99,14 @@ White_Proportion_Community              <- Total_White_Count_Community          
 English_Learners_Proportion_Community   <- Total_English_Learners_Count_Community   / Total_Student_Count_Community
 Low_Income_Proportion_Community         <- Total_Low_Income_Count_Community         / Total_Student_Count_Community
 
-condensed_school_data <- data.frame(Community_Area = 1:77, Average_ACT_Community, Average_College_Enrollment_Community, Asian_Proportion_Community, Black_Proportion_Community, Hispanic_Proportion_Community, Multi_Proportion_Community, White_Proportion_Community, English_Learners_Proportion_Community, Low_Income_Proportion_Community, Total_Student_Count_Community, Total_Asian_Count_Community, Total_Black_Count_Community, Total_Hispanic_Count_Community, Total_Multi_Count_Community, Total_White_Count_Community, Total_English_Learners_Count_Community, Total_Low_Income_Count_Community)
+condensed_school_data <- data.frame(Community_Area = 1:77, Average_ACT_Community, Average_College_Enrollment_Community, Total_English_Learners_Count_Community, Total_Low_Income_Count_Community)
 ```
 
 ```{r}
 df_short <- df_short %>% merge(condensed_school_data, "Community_Area")
 
 rm(community_areas, school_locations, school_data)
-rm(Average_ACT_Community, Average_College_Enrollment_Community, Total_Asian_Count_Community, Total_Low_Income_Count_Community, Total_Student_Count_Community, Asian_Proportion_Community, Black_Proportion_Community, Hispanic_Proportion_Community, Multi_Proportion_Community, English_Learners_Proportion_Community, Low_Income_Proportion_Community)
+rm(Average_ACT_Community, Average_College_Enrollment_Community, Total_Asian_Count_Community, Total_Low_Income_Count_Community, Total_Student_Count_Community, Asian_Proportion_Community, Black_Proportion_Community, Hispanic_Proportion_Community, Multi_Proportion_Community, English_Learners_Proportion_Community, Low_Income_Proportion_Community, Total_Black_Count_Community, Total_English_Learners_Count_Community, Total_Hispanic_Count_Community, Total_Multi_Count_Community, Total_White_Count_Community, White_Proportion_Community)
 ```
 
 ```{r}
@@ -121,34 +121,71 @@ housing <- read_csv("data/Affordable_Rental_Housing_Developments.csv") %>%
 ```
 ```{r}
 # total units of each property type, by community
-total_units_frame <- data.frame(tapply(housing$Units, list(housing$Property_Type, housing$Community_Area), sum))
-total_units_frame %<>%
-  mutate(Property_Type = rownames(total_units_frame)) %>%
-  pivot_longer(cols = !Property_Type, names_to = "Community_Area", values_to = "Total_Units_Property_Community")
-total_units_frame %<>%
-  mutate(Community_Area = as.numeric(str_extract(total_units_frame$Community_Area, "\\d+"))) %>%
+# total_units_frame <- data.frame(tapply(housing$Units, list(housing$Property_Type, housing$Community_Area), sum))
+# total_units_frame %<>%
+#   mutate(Property_Type = rownames(total_units_frame)) %>%
+#   pivot_longer(cols = !Property_Type, names_to = "Community_Area", values_to = "Total_Units_Property_Community")
+# total_units_frame %<>%
+#   mutate(Community_Area = as.numeric(str_extract(total_units_frame$Community_Area, "\\d+"))) %>%
+#   drop_na()
+total_units_frame <- housing %>%
+  group_by(Community_Area) %>%
+  summarize(
+    Total_Units=sum(Units),
+    # Total_SRO=sum(Units[housing$Property_Type == "SRO"])
+  ) %>%
   drop_na()
 
 missing_comm_areas <- data.frame(
   Community_Area = symdiff(1:77, housing$Community_Area),
-  Property_Type = NA,
-  Total_Units_Property_Community = rep(0, 77 - length(unique(housing$Community_Area)))
+  # Property_Type = NA,
+  # Total_Units_Property_Community = rep(0, 77 - length(unique(housing$Community_Area)))
+  Total_Units = rep(0, 77 - length(unique(housing$Community_Area)))
 )
 
 total_units_frame <- rbind(total_units_frame, missing_comm_areas, stringsAsFactors = FALSE)
+```
+```{r}
+units_property_frame <- data.frame(Community_Area = 1:77)
+for (property_type in unique(housing$Property_Type)) {
+  filtered_housing <- housing[housing$Property_Type == property_type,]
+  factor_units_frame <- filtered_housing %>%
+    group_by(Community_Area) %>%
+    summarize(Total_Units=sum(Units)) %>%
+    drop_na()
 
-housing %<>% merge(total_units_frame, c("Community_Area", "Property_Type"))
+  factor_missing_comm_areas <- data.frame(
+    Community_Area = symdiff(1:77, filtered_housing$Community_Area),
+    Total_Units = rep(0, 77 - length(unique(filtered_housing$Community_Area)))
+  )
 
-# x = data.frame(tapply(total_units_frame$Total_Units_Property_Community, list(total_units_frame$Community_Area, total_units_frame$Property_Type), sum))
-# y = data.frame(tapply(housing$Units, list(housing$Property_Type, housing$Community_Area), sum))
-# Total_Senior_Housing_Community =
-# total_units_frame %>% mutate(
-#   Total_Senior_Housing_Community =
-# )
+  factor_units_frame <- rbind(factor_units_frame, factor_missing_comm_areas, stringsAsFactors = FALSE)
+
+  units_property_frame[, paste0("Total_", property_type)] <- factor_units_frame
+  # units_property_frame[property_type] <- factor_units_frame
+  # units_property_frame %<>% merge(factor_units_frame, "Community_Area")
+  # print(colnames(units_property_frame))
+}
 ```
 
 ```{r}
-df_short <- df_short %>% merge(housing, "Community_Area")
+df_short_second <- df_short
+```
+```{r}
+units_property_frame %<>% mutate(
+        Total_Multifamily = Total_Multifamily + Total_Multfamily + `Total_Multifamily/Artists`,
+        Total_NonSeniorSupportive = Total_Supportive + `Total_Supportive/HIV/AIDS` + `Total_Supportive/Kinship Families` + `Total_Supportive/Youth/Kinship Families` + `Total_Supportive/Teenage Moms` + `Total_Supportive/Veterans` + `Total_Supportive Housing` + `Total_Supportive/Males 18-24yrs.` + `Total_SRO/Supportive` + `Total_Women's Supportive` + `Total_65+/Supportive`,
+        Total_Senior = Total_Senior + `Total_Senior Supportive Living` + `Total_Senior LGBTQ` + `Total_Senior HUD 202` + `Total_65+/Supportive`,
+        Total_Artist = `Total_Artist Live/Work Space` + `Total_Artist Housing` + `Total_Artist/Family` + `Total_Artists & Families`,
+        Total_Youth = `Total_Supportive/Males 18-24yrs.` + `Total_Supportive/Teenage Moms`,
+        Total_SRO = Total_SRO + `Total_SRO/Supportive`
+) %>% select(Community_Area, Total_Multifamily, Total_NonSeniorSupportive, Total_SRO, Total_Senior, Total_Artist, Total_ARO, Total_Youth)
+```
+
+```{r}
+df_short %<>% merge(total_units_frame, "Community_Area")
+df_short %<>% merge(units_property_frame, "Community_Area")
+# df_short <- df_short %>% merge(housing, "Community_Area")
 ```
 
 
@@ -193,14 +230,128 @@ df_short %<>% mutate(
 df_short <- df_short[!is.na(df_short$Total_Included_Cost),] # Remove ignored crimes (~15.54% of dataset)
 ```
 
+```{r}
+housing_economics <- data.table::fread("data/Census_Data_-_Selected_socioeconomic_indicators_in_Chicago__2008___2012.csv")
+housing_economics %<>% filter(!is.na(`Community Area Number`))
+housing_economics %<>% rename(Community_Area = `Community Area Number`, Hardship_Index = `HARDSHIP INDEX`, Per_Capita_Income = `PER CAPITA INCOME`, Percent_Crowded = `PERCENT OF HOUSING CROWDED`)
+housing_economics %<>% select(Community_Area, Hardship_Index, Per_Capita_Income, Percent_Crowded)
+```
+
+```{r}
+df_short %<>% merge(housing_economics, "Community_Area")
+```
+
 # save
 ```{r}
 save(df_short, file = "data/df_short.Rdata")
 ```
 
 # Models
+# New
 ## Get data
 ```{r}
+parsed_data <- df_short %>% count(Total_Units, Total_ARO, Total_Artist, Total_Senior, Total_NonSeniorSupportive, Total_Multifamily, Total_SRO, Per_Capita_Income, Hardship_Index)
+
+# parsed_data <- df_short %>% count(Total_Units, "Total_Multifamily/Artists", Total_Multifamily, Total_Multfamily, "Total_Supportive/Males 18-24yrs.", "Total_People with Disabilities", Total_Senior, Total_ARO, "Total_Supportive Housing", "Total_Senior HUD 202", "Total_Supportive/Veterans", "Total_Senior Supportive Living", "Total_Artists & Families", "Total_Inter-generational", Total_SRO, Total_Supportive, Total_Seniors, "Total_Artist/Family", "Total_Supportive/Teenage Moms", "Total_Supportive/Youth/Kinship Families", Total_Veterans, "Total_Artist Housing", "Total_65+/Supportive", "Total_Disabled/Homeless", "Total_Supportive/Kinship Families", "Total_Artist Live/Work Space", "Total_SRO/Supportive", "Total_Senior LGBTQ", "Total_Supportive/HIV/AIDS", "Total_Women's Supportive")
+```
+```{r}
+
+parsed_data_costs <- aggregate(
+        Total_Included_Cost ~
+        Total_Units +
+        Total_ARO +
+        Total_Artist +
+        Total_Senior +
+        Total_NonSeniorSupportive +
+        Total_Multifamily +
+        Total_SRO +
+        # Total_Youth +
+        Per_Capita_Income +
+        Hardship_Index +
+        Percent_Crowded +
+        Average_ACT_Community.x +
+        temp.x
+, data = df_short, FUN=sum)
+```
+
+## Model
+```{r}
+
+n_model <- lm(n ~
+              Total_Units +
+              # Total_ARO +
+              # Total_Artist +
+              # Total_Senior +
+              Total_NonSeniorSupportive +
+              Total_Multifamily +
+              Total_SRO,
+            ,data = parsed_data)
+# print(summary(n_model))
+
+n_model <- lm(n ~
+                         Hardship_Index*Total_Units +
+                                 Hardship_Index*Total_ARO +
+                                 # Hardship_Index*Total_Artist +
+                                 # Hardship_Index*Total_Senior +
+                                 Hardship_Index*Total_NonSeniorSupportive +
+                                 # Hardship_Index*Total_Multifamily +
+                                 Hardship_Index*Total_SRO +
+                                 # Per_Capita_Income +
+                                 Hardship_Index
+                 # Average_ACT_Community.x +
+                 # temp.x
+        ,data = parsed_data)
+print(summary(n_model))
+
+cost_model1 <- lm(Total_Included_Cost ~
+                   Total_Units +
+                   Total_ARO +
+                   Total_Artist +
+                   Total_Senior +
+                   Total_NonSeniorSupportive +
+                   Total_Multifamily +
+                   Total_SRO +
+                   Percent_Crowded +
+                   Per_Capita_Income +
+                   Hardship_Index,
+                   # Average_ACT_Community.x +
+                   #   temp.x
+             ,data = parsed_data_costs)
+
+
+print(summary(cost_model1))
+
+cost_model <- lm(Total_Included_Cost ~
+                         Hardship_Index*Total_Units +
+                         Hardship_Index*Total_ARO +
+                         # Hardship_Index*Total_Artist +
+                         # Hardship_Index*Total_Senior +
+                         # Hardship_Index*Total_NonSeniorSupportive +
+                         # Hardship_Index*Total_Multifamily +
+                         Hardship_Index*Total_SRO +
+                         # Per_Capita_Income +
+                         Hardship_Index
+                         # Average_ACT_Community.x +
+                         # temp.x
+        ,data = parsed_data_costs)
+
+print(summary(cost_model))
+print(summary(lm(Total_Included_Cost ~ Hardship_Index, data = parsed_data_costs)))
+
+irrelevant_model <- lm(Total_Included_Cost ~ Hardship_Index*Total_Artist, data = parsed_data_costs)
+print(summary(irrelevant_model))
+
+irrelevant_model2 <- lm(Total_Included_Cost ~ Hardship_Index*Total_Senior, data = parsed_data_costs)
+print(summary(irrelevant_model2))
+
+ggplot(parsed_data_costs, aes(x = Total_Units, y = Total_Included_Cost)) +
+        geom_point() +
+        geom_smooth(method = "lm")
+```
+# Old
+## Get data
+```{r}
+
 parsed_data <- df_short %>% count(temp, DayMonth, Community_Area, Average_ACT_Community, Average_College_Enrollment_Community, Asian_Proportion_Community, Black_Proportion_Community, Hispanic_Proportion_Community, Multi_Proportion_Community, White_Proportion_Community, English_Learners_Proportion_Community, Low_Income_Proportion_Community, Total_Asian_Count_Community, Total_Black_Count_Community, Total_Hispanic_Count_Community, Total_Multi_Count_Community, Total_White_Count_Community, Total_English_Learners_Count_Community, Total_Low_Income_Count_Community, Total_Student_Count_Community, Property_Type, Total_Units_Property_Community)
 ```
 Dummies
