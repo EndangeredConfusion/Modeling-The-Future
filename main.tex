@@ -1,0 +1,757 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage[affil-it]{authblk} 
+\usepackage{etoolbox}
+\usepackage{lmodern}
+\usepackage[fontsize=12pt]{fontsize}
+\usepackage{setspace}
+\usepackage[backend=biber,
+style=numeric]{biblatex}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{subfig}
+\usepackage{float}
+\usepackage{amsmath,mathtools}
+
+\addtolength{\topmargin}{-0in}
+
+\graphicspath{ {./images/} }
+
+\addbibresource{references.blg}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+\hypersetup{
+    colorlinks=true,
+    linktoc=all,
+    linkcolor=black,
+}
+
+
+\title{Tuning Forks: The Costs of Crime in Chicago and how Affordable Housing can Help}
+\author{Team 12058}
+\date{March 2023}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{fancy}
+\fancyhead{}
+\lhead{Team 12058}
+\rhead{Table of Contents}
+\fancyfoot{}
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+\setcounter{page}{1}
+\rhead{Page \thepage}
+
+\begin{onehalfspacing}
+
+\section{Executive Summary}
+Since 2001, there have been over 7.74 million reported crimes within the borders of Chicago \cite{crimes}. Chicago has long been undergoing one of the most major crime crises of the United States. Among these millions of crimes however, the majority are victimless and do not have an associated cost. From the emotional costs incurred upon the victims to the loss of money the city experiences, violent crime has many harmful consequences. We created our model to analyze the causes of crimes and the costs that they incur. Using our model, we will provide recommendations on what what housing developments the city needs to provide to reduce the costs of crime.
+
+We utilized data on housing in Chicago to create our model relating the availability of housing to crime. We used datasets on crimes, affordable housing developments, and prices of housing to find the effects that they have on crime.
+Our model distinguishes a relationship between crime in Chicago and the availability of housing. We used linear regression to create a function capable of predicting the prevalence of crime in a single community area, or the entire city itself.
+
+Using our model, we applied the costs associated with a crime, including victim losses, medical costs, emotional costs, criminal justice system costs, and opportunity costs to predict the losses experienced from crime. Using these quantified losses for the city and its residents, we were able to determine the optimal methods needed to develop in order to reduce the total losses due to crime.
+
+The Modeling showed that the majority of the costs associated with crime present were from homicides. Theft, battery, and narcotics accounted for over 50\% of all crimes reported, however, homicide is over 30 times more expensive for the city and for the people than any other crime. After homicide with over 50\% of the cost to society, battery amounts to just under a quarter of total costs to society.We determined that the availability and cost of housing does have a relationship to the amount of crime, especially when certain types of housing was considered with the socioeconomic hardship of the region.
+
+In conclusion, areas with difficult socioeconomic conditions benefit proportionally more from single room housing and Chicago's Affordable Requirements Ordinance policy. We recommend these programs to continue as well as to grow, benefitting society economically as well as aiding with criminal issues in poorer areas.
+
+\pagebreak
+\section{Introduction and Background}
+\onehalfspacing
+When a tuning fork is struck to vibrate in the fundamental mode, it will oscillate with the frequency $f=\frac{a^2}{2\pi}\sqrt{\frac{EI}{\lambda L^4}}$ \cite{Tkachenko}. Much like how a tuning fork will always oscillate with the same frequency, as long as its physical properties are kept constant, crime in the city of Chicago will continue unless the fundamental cause of the problem is rectified.
+
+In 2020, there were 769 homicides in the city, the highest number in decades. The nationwide spike in homicides has widely been attributed to the onset of the COVID-19 pandemic. Mental health issues exacerbated by the pandemic combined with increased gang participation from unemployment \cite{covid-homicides}.
+
+2020 saw a 30\% annual increase in homicides across the country, with firearms becoming the leading cause of death for children, adolescents, and young adults. Young adult males living in the most violent zip code in Chicago were \emph{3.23 times more likely} to be killed in a firearm-related death than US military service members deployed in Afghanistan. In the top 10\% of the most violent zip codes of Chicago, the risk was still \emph{2.10 times greater}. Nonfatal shooting risks likewise exceeded the risk of injury of combat in Iraq. 96.2\% of individuals studied who were fatally shot, and 97.3\% of those were were injured non-fatally were Black and Hispanic males \cite{10.1001/jamanetworkopen.2022.48132}.
+
+The City of Chicago has allocated \$1.9 billion for the 2023 Fiscal Year to the Chicago Police Department. The total city budget for the year is \$16.4 billion. The police department accounts for 11.6\% of the yearly budget \cite{cpd-spending}. In recent years, the police department has been increasing patrols in high-crime areas, as well as using technology to track crime trends, amidst other initiatives. Despite their efforts, crime remains prevalent, especially in low-income neighborhoods.
+
+Simultaneously, Chicago has been undergoing a massive police shortage. Officers are retiring or moving to other departments in mass numbers, citing dangerous working conditions, scheduling, and the difficulty of the work \cite{cbs-policing}. City leaders do not expect an end to the issue. With this shortage, the police were unable to respond to 400,000 high priority 911 calls in 2021, half of all the 911 calls that year. In total, the CPD has over 1600 less officers from duty in 2023 as compared to 2019 \cite{CPD-staffing}.
+
+As seen in the graph, crime has been steadily decreasing since 2001, up until 2020. With the start of 2020, crime in all categories has returned to an upward trend, however it has not yet returned to rates prior to that of 2014.
+
+\begin{figure}
+    \centering
+    \centerline{\includegraphics[width=8in]{images/crimes.png}}
+\end{figure}
+
+Meanwhile, the availability of affordable housing has been decreasing in Chicago. 2017-2019 experienced a 5.2\% decline in average affordable housing units 2012-2014 \cite{aff-housing-dec}. Although politicians on all sides are attempting to support renters, the proportion of rent-burdened households continues to increase. 74\% of very low-income households pay more than 50\% of income for rent. Although the demand for affordable housing has been falling ever since the end of the 2008 recession, the supply has been falling even faster \cite{aff-housing}. The focus of our model and analysis is on the availability of housing. We will determine how prevalent the issue of diminishing housing opportunities is in relation to crime. Those without affordable housing are often forced into poverty, making crime a much more attractive option. We will recommend the city to either encourage more affordable housing, or prioritize their efforts in other sectors of society.
+
+The 2023 Chicago mayoral election was held on Tuesday, February 28. After the first round, the current mayor, Lori Lightfoot, was denied a second term by the voters. Many voters blamed Lightfoot for an increase in crime and criticized her for being a divisive, contentious leader.
+
+The current frontrunner, Paul Vallas, served as an adviser to the Fraternal Order of Police. He has advocated for adding hundreds of police officers to the city, claiming that crime is out of control and morale among officers has sunk to a new low. He has exclaimed, “We will have a safe Chicago. We will make Chicago the safest city in America.”
+
+The other candidate, Brandon Johnson, is strongly supported by the Chicago Teachers Union. He claims that the answer to addressing crime is not more money for police, but rather investment in mental health care, education, jobs, and affordable housing \cite{burnett}.
+
+Our report and analysis will determine who is right - and what they should do, primarily with a focus on affordable housing. Crime has been drastically increasing in the United States, but especially so in Chicago. Wealth inequality has been steadily growing throughout the country; The cost of housing is increasing while wages remain stagnant. A return to the previous status quo is predicted to not occur for many more years, and Chicago is struggling to keep up. We must address the issue of crime, starting with one of the cities most notorious for it.
+
+\section{Data Methodology}
+In order to analyze crime in relation to our sets of conditions for the model, we need detailed data in large volumes. Luckily for us, the city of Chicago provides access to hundreds of datasets \cite{data}, including a dataset of every crime reported since 2001. We will be using the crimes data set and relating it by time and by physical location to affordable housing developments. We will further use the data to calculate future trends using our factors to predict the volume of crime that will happen in the city.
+\subsection{Crime}
+\begin{itemize}
+    \item \textbf{Motivation}: We need a dataset with information about crime in Chicago to sort crimes and analyze trends.
+    \item \textbf{Parameters}: This dataset contains individual records of each reported crime since 2001. Each observation is a recorded crime, with information including ID, block, type, description, location, arrest made, domestic crime, community area, and more. It includes over seven million records that we can relate to other datasets \cite{crimes}.
+    \item \textbf{Purpose}:  We will be using this dataset to examine different types of crimes, the locations in which they happened, and the time in which they occurred. Using this dataset, we will be able to cross reference it with other datasets and determine information about crimes from our model. Since it contains millions of records, we will split the data by different parameters to interact with it.
+\end{itemize}
+
+\subsection{Affordable Housing}
+\begin{itemize}
+    \item \textbf{Motivation:} As found by the University of California Irvine Livable Cities Lab, the availability of affordable housing units decreases crime and increases property values in Orange County \cite{aff-housing-crime-rates}. We want to observe if there is a similar relationship in Chicago.
+    \item \textbf{Parameters:} This dataset contains the type of each affordable housing development in Chicago. Alongside the development, it provides the community area that it is located in, the type of property (senior, multifamily, teenage moms, etc.), physical coordinates, and the number of units in a development \cite{housing-developments}.
+    \item \textbf{Purpose:} We will use this dataset to examine how the availability of affordable housing units relates to the crime rates in an area.
+\end{itemize}
+
+\subsection{Socioeconomic Indicators}
+\begin{itemize}
+    \item \textbf{Motivation:} We want to investigate how the quality of housing is related to crime. We will incorporate socioeconomic indicators and how they relate to housing availability.
+    \item \textbf{Parameters:} The dataset of socioeconomic indicators provides a multitude of values for each individual community area. It provides many percent values, including housing crowded, housing below poverty, housing of unemployed, housing of individuals above 25 without a high school diploma, a per capita income, and a "hardship index" \cite{socioeconomics}.
+    \item \textbf{Purpose:} We will include data on the hardship of a community area in housing, as well percent of housing crowded and income in our model. Doing so will allow us to see if the socioeconomic conditions of one's residence creates more crime.
+\end{itemize}
+
+We will use the crimes and affordable housing datasets to analyze historical trends in our data as well as project the data into future scenarios. We can separate our outcomes by observing the impact each of our factors has on crime in a community area as a whole. Frequency and severity in our data are observed by the quantity of crime and the cost of crime in each community area.
+
+All of our data is provided by credible sources. The majority comes directly from the city of Chicago. Other data comes from reputable organizations such as universities in Cook County. 
+
+As the crime dataset came in the form of a list of crimes, each with their given attributes, it was not immediately possible to analyze or apply a regression to; thus, we aggregated it by counting incidences of each combination of factors desired. This count data was further combined with the societal costs of crimes acquired from several studies to determine societal cost or savings caused by various factors.
+
+We did not significantly clean or adjust the other datasets.
+
+\section{Mathematics Methodology}
+A tuning fork can be modelled as a weightless cantilever beam with a mass concentrated on the end, allowing for an exceptionally simple and surprisingly accurate model; extending the model into a solid uniform beam increases the complexity exponentially, but is necessary for a more accurate representation \cite{Tkachenko}. Similarly, crime can be found as a resultant of a few simple factors, however, to get a deeper image, we need to dig into many details. 
+
+In our model, we will determine factors that we can use to predict the crime in an area of Chicago. Using our predictions, we can model the losses that the city experiences from crime and determine steps that they should take to minimize it. By using linear regression and timescale models, we can identify the factors that contribute to crime in Chicago and develop a better understanding of the underlying causes of criminal activity in the city. Finally, we will predict the total money the city can save on crime through implementing affordable housing programs.
+\subsection{Assumptions}
+\begin{enumerate}
+    \item Crime is caused by the environment in which one lives, starting from their childhood development, to the quality of their current life. We assume that crime is caused by rational actors, who each have a lack of a basic necessity that crime can fulfill. People who lead tougher lives and are more susceptible to volatility in the quality of their life are necessarily more likely to commit more crimes. Meanwhile, people will access to more resources are less likely to commit crime.
+    \item The factors we are investigating in our model are independent of each other. We assume that the different factors such as affordable housing and rental housing do not affect each other, they only affect the amount of crime. While it is likely this assumption does not hold in its entirety in the real world, it is required for the simplicity of our model.
+    \item Crimes do not overlap between the 77 Chicago community areas. Prevalence of crime in a single community area is unaffected by crime in neighboring community areas.
+    \item The quantity and quality of housing in an area is a direct cause of criminal activity in an area. Crime is directly influenced by housing conditions rather than simply correlated. However, it is also true that more affordable housing units are built in poorer areas where crime is more likely; thus, limitations of this assumption are discussed further on.
+\end{enumerate}
+
+\subsection{Total Crimes}
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[width=10in]{images/proportion_crimes.png}}
+    \caption{Proportion of Crimes}
+\end{figure}
+As seen in the Figure 1, theft makes up the single largest section of crime, followed closely by battery. Together with narcotics, the top three crimes make up over 50\% of all crimes committed since 2001. Following the three largest types of crimes, the next eight each follow closely in size, only decreasing slightly with each consecutive category. Interestingly, all other types of crime not explicitly represented on the chart make up the fourth largest category. With this information, we must investigate the crimes as a whole rather than splitting them up and neglecting to consider certain types.
+
+\subsection{Crimes by Period of Time}
+\begin{figure}[H]
+\centering
+\begin{tabular}{cc}
+  \centerline{\includegraphics[width=5.5in]{images/crimes_by_days.png}} \\ 
+  (a) Days \\[6pt]
+  \centerline{\includegraphics[width=5.5in]{images/crimes_by_months.png}} \\
+  (b) Months \\[6pt]
+\end{tabular}
+\caption{Crimes by Day of Week and Month of Year}
+\end{figure}
+As seen in Figure 2 graph (a), We observe a mostly uniform distribution of crimes when graphed by the day of the week. The biggest exceptions to the distribution are Fridays, on which a disproportionately large number of crime occurs, alongside Sundays, when a disproportionately small amount of crime occurs. The increase on Fridays can be attributed to people being more active and more likely to leave their homes in the evening hours. The decrease in Sundays is likely caused by people being less likely to leave their homes. Overall, these patterns are not something we can control and are insignificant enough to neglect. 
+
+In Figure 2 graph (b), The crimes by month are single peaked in the middle of the summer and decrease as the months approach winter. Since 2001, there is almost a 200,000 crime difference between total crimes in July and February. We attribute this difference to people being less likely to travel out of their homes for an extended period of time during the frigid months in Chicago. We will see these trends appear in our further graphs and it will be included in the model.
+
+\subsection{Linear Regression}
+Our linear regression model is derived by assessing our variables in relation to how many crimes occur in the community areas under those conditions. The variables used in our model are listed below.
+
+\begin{center}
+\begin{tabular}{ | m{1in} | m{4in} | } 
+  \hline
+  Variable & Definition \\
+  \hline \hline
+  $\kappa$ & Total cost of crimes \\
+  \hline
+  $\Upsilon_H$ & Total number of affordable housing units in a community area \\
+  \hline
+  $\sigma_H$ & Total number of ARO (Affordable Requirements Ordinance) units \\
+  \hline
+  $\Psi_H$ & Total units of artist housing \\
+  \hline
+  $\nu_H$ & Senior housing units \\
+  \hline
+  $\eta_H$ & Supportive housing units towards non-seniors \\ 
+  \hline
+  $\theta_H$ & Multi-Family housing units \\
+  \hline
+  $\beta_H$ & Total SRO (Single Room Occupancy) \\
+  \hline
+  $\Upsilon_P$ & Percent of total housing that is crowded \\
+  \hline
+  $\delta_C$ & Per-Capita Income \\
+  \hline
+  $\Gamma_H$ & Hardship Index (Overarching index for measuring socioeconomic hardship) \\
+  \hline
+\end{tabular}
+\end{center}
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[width=7in]{images/linreg.png}}
+    \caption{Linear Fit with our Parameters}
+\end{figure}
+
+The linear regression performed using these variables provides us with the equation:
+
+\begin{multline*}
+    \kappa = 10822072.5 + (68792.1 * \Gamma_H) + (162249.2 * \sigma_H) + (-137335.3 * \eta_H) + (601355.9 * \beta_H) \\
+    + (-11868.2 * \Gamma_H * \sigma_H) + (3137.8 * \Gamma_H * \eta_H) + (-10109.8 * \Gamma_H * \beta_H) + (68792.1 * \Gamma_H)
+\end{multline*}
+
+The total cost $\kappa$ is measured in \$, however we have not yet defined how cost is attributed to crime values. We will discuss our methodology in the Risk section.
+
+\subsection{Analysis of Model}
+\begin{itemize}
+    \item All of the coefficients above show a strong statistical significance in our model
+    \item The intercept for cost of crime in a community area without any affordable housing and a hypothetical Hardship Index of zero is predicted to be \$10,822,072
+    \item For each additional unitary increase in hardship index, the cost is expected to increase by \$68,792
+    \item Total ARO housing by itself appears to increase the cost, however this is expected as areas with higher hardship will have more crime unrelated to housing. The same is true for total SRO housing
+    \item The coefficient of the ARO and Hardship Index product term is negative, implying that ARO has an outsized negative impact on crime in areas with higher hardship. The same is true for SRO housing
+    \item Contrarily, non-senior supportive housing decreases the cost of crime when hardship index is not factored in
+    \item When factoring in hardship alongside housing index, non-senior housing is shown to have a minimally decreasing effect size as Hardship Index increases
+\end{itemize}
+
+Using this equation, we can predict the total cost of crime in a community area given the hardship index and the total units of each type of housing. The adjusted R-squared value of the fit is 0.1439, making it not particularly useful for predicting the total cost of crime from housing alone. Nevertheless, it is expected that housing is not the only contributing factor to crime. If we only want to consider how housing effects the costs, our model can fulfill that.
+
+\subsection{Model Time Variance}
+As mentioned in the introduction, with the exclusion of the pandemic-caused downward spike in crime in 2020, Chicago crime rates have been largely consistent since 2014. The trend since 2001 has been slightly decreasing, however, and Chicago continually attempts new methods for reducing crime. Thus, it would not be unreasonable to predict a continuing decrease in crime towards the future.
+
+However, this does not affect our model: even if overall crime decreases, there is no evidence in any of our data to suggest that the \emph{efficacy} of affordable housing will be either strengthened or attenuated. Thus, we predict that our model will retain its usefulness into the foreseeable future, regardless of macroscopic trends in total citywide crime.
+
+\section{Risk Analysis}
+Using our model, we will create a monetary estimate for the risk faced by the city of Chicago and by the people. To do so, we must first associate a monetary value to a crime.
+\subsection{Associated Costs}
+With any crime, there are numerous associated costs that follow it. Even a simple crime such as petty theft can have costs far beyond the amount stolen. After the costs to the victim, there remains the cost to the criminal justice system, opportunity costs, and intangible costs \cite{costs}.
+\subsubsection{Victim Costs}
+Victim costs are the direct economic losses that are suffered by the victims of a crime. These costs can include an amount stolen, costs of medical care, or property damage.
+\subsubsection{Criminal Justice System Costs}
+Criminal justice system cost covers local, state, and federal government funds spent on police protection, legal and adjudication services, and the costs of incarceration.
+\subsubsection{Crime Career Costs}
+When a criminal chooses to engage in illegal activities, they give up the opportunity to engage in legal and productive activities. Crime career costs covers the losses experienced from a criminal not choosing a beneficial line of work.
+\subsubsection{Intangible Costs}
+Intangible losses are emotional losses covered by the victims of a crime and their families, including pain and suffering, a decreased quality of life, and psychological distress.
+\subsubsection{Summary of Costs}
+With all of the above costs considered, we can measure an estimate of the economic costs of individual crimes. The broad societal perspective applies to our research, as we intend to provide recommendations on how the city of Chicago can optimally allocate resources to minimize economic losses from individual crimes. 
+
+Provided below is a table with values for the sum of these costs that we obtained from a few studies on the costs of crime to society \cite{costs}\cite{costs-nar}\cite{DEA}.
+\begin{center}
+\begin{tabular}{ | m{1in} | m{4in}| m{1in} | } 
+  \hline
+  Crime & Definition & Associated Cost \\
+  \hline \hline
+  Murder & The killing of one human being by another, through either a willful act (non-negligent manslaughter) or negligence (negligent manslaughter). & \$8,982,907 \\ 
+  \hline
+  Rape/Sexual Assault & Forced sexual intercourse involving psychological coercion and physical force, as well as attacks or attempted attacks generally involving unwanted sexual contact between victim and offender. & \$240,776 \\ 
+  \hline
+  Aggravated Assault & Attack or attempted attack with a weapon, regardless of whether or not an injury occurred, and attack without a weapon when serious injury results. & \$107,020 \\
+  \hline
+  Robbery & Completed or attempted theft, directly from an individual, of property or cash by force or threat of force, with or without a weapon, and with or without injury. & \$42,310 \\
+  \hline
+  Arson & The unlawful and intentional damage, or attempt to damage, any personal property by fire or incendiary device. & \$21,103 \\
+  \hline
+  Larceny/Theft & Completed or attempted theft of property or cash without personal contact, including theft or attempted theft of property or cash directly from the victim without force or threat of force, purse snatching, and pocket picking. & \$3,532 \\
+  \hline
+  Motor Vehicle Theft & Stealing or unauthorized seizure of a motor vehicle, including attempted thefts. & \$10,772 \\
+  \hline
+  Household Burglary & Unlawful/forcible entry or attempted entry into a residence, usually involving theft. & \$6,462 \\
+  \hline
+  Embezzlement & The unlawful misappropriation for profit of money, property, or some other article of value entrusted to the care, custody, or control of the offender. & \$5,480 \\
+  \hline
+  Fraud & The intentional perversion of the truth for the purpose of inducing another person or entity to part with something of value or to surrender a legal right. & \$5,032 \\
+  \hline
+\end{tabular}
+\end{center}
+\begin{center}
+\begin{tabular}{ | m{1in} | m{4in}| m{1in} | } 
+  \hline
+  Stolen Property & The reception, purchase, retail, possession, concealment, or transportation of any property with the knowledge that it has been unlawfully taken. & \$7,974 \\
+  \hline
+  Forgery and Counterfeiting & The unauthorized altering, copying, or imitation of an article with the intent to deceive or defraud by passing off the copy as the original or the selling, buying, or possession of an altered, copied, or imitated article with the intent to deceive or defraud. & \$5,265 \\
+  \hline
+  Vandalism & The willful destruction or damage of real or personal property without the consent of the owner or the individual in custody or control of it. & \$4,860 \\
+  \hline
+  Narcotics & Possession, purchase, or sale of illegal drugs. Illegal Drug means a controlled substance, as specified in Schedules I through V of the Controlled Substances Act. The term illegal drugs does not apply to the use of a controlled substance in accordance with terms of a valid prescription, or other uses authorized by law. & \$32 \\
+  \hline
+\end{tabular}
+\end{center}
+
+\subsection{Proportion of Costs}
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[width=10in]{images/proportion_costs.png}}
+    \caption{Proportion of the Costs of Crimes}
+\end{figure}
+As observed in Figure 4, homicide makes up over 50\% of the costs of crime. Homicide is over 37.3 times more expensive for society than the second-most expensive crime, giving it a significant margin even when considering the smaller frequency relative to other categories of crime in Chicago. The second most expensive category is battery, followed by assault. Theft, although it is the most frequent crime, takes up only a minor portion of the costs.
+
+\subsection{Costs of Crime}
+\begin{figure}[H]
+\centering
+\begin{tabular}{cc}
+  \centerline{\includegraphics[width=6in]{images/cost_of_crimes.png}} \\ 
+  (a) Costs \\[6pt]
+  \centerline{\includegraphics[width=6in]{images/cost_of_crimes_log.png}} \\
+  (b) Costs Log \\[6pt]
+\end{tabular}
+\caption{The Costs of Crime}
+\end{figure}
+
+Figure 5, graph (a) shows the total costs of individual crimes by day. Since 2001, everything with the exception of homicide and battery has been oscillating consistently by the months in a year. Any changes in the total costs are not visible with the overall perspective, therefore any changes to their rates have not been significant. Costs of battery have been steadily decreasing since 2001, originally starting with significant spikes during the summer months and valleys in the winter months. The costs have been going down consistently, decreasing by nearly \$150,000,000 since 2001, and the peaks not having as drastic of a spike. Whilst everything else has been steady or decreasing, homicide has been the most erratic. From 2001 to 2015, homicide costs were steadily decreasing. In 2016, there was a large spike, followed by more spikes in 2020 and 2021, with a monthly cost of around \$400,000,000 to \$1,100,000,000.
+
+On Figure 5 graph (b), we can observe the same graph but with a logarithmic cost axis. On this scale, we can see trends in different categories that are overshadowed in the full sized graph. The costs of narcotics, originally almost negligible, have taken a significant drop in 2020 and have not recovered to previous levels since. Contrarily, costs of criminal sexual assault have been continually on the rise since around 2014, going from the second least expensive to the fourth or fifth spot in the past eight years. Similarly, deceptive practice costs increase in 2014, although they have stayed mostly constant since.
+
+\subsection{Money Saved or Lost by Housing}
+As we recall from the modeling section, we have an equation for the cost saved by a housing unit.
+
+\begin{multline*}
+    \kappa = 10822072.5 + (68792.1 * \Gamma_H) + (162249.2 * \sigma_H) + (-137335.3 * \eta_H) + (601355.9 * \beta_H) \\
+    + (-11868.2 * \Gamma_H * \sigma_H) + (3137.8 * \Gamma_H * \eta_H) + (-10109.8 * \Gamma_H * \beta_H) + (68792.1 * \Gamma_H)
+\end{multline*}
+
+What this equation means is that, on average and adjusted for hardship index of a community area, one unit of Affordable Requirements Ordinance will save the city and the people about \$11,868.2. One unit of non-senior supportive housing will increase the costs by \$3137.8, and one unit of Single Room Occupancy housing will decrease costs by \$10109.8. A single-point decrease in the hardship index however, will decrease the costs to the city by \$68792.1.
+
+As expected, hardship index has a strong relationship with crime. However, it is worth it to note that when certain forms of affordable housing are combined with a hardship index, the net effect becomes negative. Implying that certain forms of housing become more effective at reducing crime when located in socioeconomically poorer areas.
+
+\section{Recommendations}
+We will now outline recommendations that the future government of Chicago should implement to reduce the costs it incurs due to criminal activity. Our recommendations will focus on the future development of affordable housing units within the city. 
+
+The large majority of the social costs of these crimes was pain and suffering; thus, we do not present an insurance-based recommendation. Any such insurance program would not be able to adequately redress, for instance, a homicide, and would thus act as an ineffectual band-aid rather than a solution.
+
+Affordable housing can theoretically directly decrease crime by physically preventing a crime such as homicide by allowing potential victims to separate themselves from dangerous areas. Such an effect is immeasurable, however, and likely small; thus, we cannot and did not consider it. Solutions such as increased policing would be far more effective in directly modifying the severity of Chicago's crime; however, these are beyond the scope of our analysis and are excluded from recommendations.
+
+\subsection{Single Room Occupancy}
+Chicago currently partners with other government and community-based organizations to preserve SRO properties through investments and various financing mechanisms. An SRO building is defined as a building that contains five or more single-room occupancy units and in which at least 90\% of the units are SRO units \cite{SRO}. Chicago should continue to support SRO developments through investments and preservation, alongside developing more SROs in poor areas. Much like with AROs, a single SRO unit in Riverdale is predicted to save \$389,404. One unit in Fuller Park ($\Gamma_H$=97) is predicted to save \$379,294. Meanwhile, one unit in Near North Side ($\Gamma_H$=1) would increase costs by \$591,246. Thus, Chicago ought to increase SRO housing in low-income areas, and stands to gain significantly from the reduction in crime.
+
+\subsection{The Affordable Requirements Ordinance}
+Currently, the government of Chicago implements the Affordable Requirements Ordinance, or ARO. The ARO requires residential developments with 10 or more units that receive City Council approval for an entitlement, a city land purchase or financial assistance to provide a portion of the units as affordable housing \cite{ARO}. Simply put, housing developments actively being built are required to dedicate at least 10 units to affordable housing. From our results and model, we suggest increasing the number of units dedicated in higher-hardship areas. Currently, the highest hardship community area in Chicago is Riverdale, with a hardship index of 98. One unit of ARO housing is predicted to decrease the cost of crime in the community by \$1,000,834. Similarly, one unit of ARO Housing in Fuller Park ($\Gamma_H$=97) is expected to decrease cost by \$988,966. In contrast, one unit of ARO in Near North Side ($\Gamma_H$=1) will increase costs by \$150,381. Thus, Chicago ought to increase required ARO housing per development in low-income areas, receiving an even larger societal benefit than with the SRO program.
+
+\end{onehalfspacing}
+\pagebreak
+\printbibliography[heading=bibintoc, title=References]
+
+\pagebreak
+\section{Appendix}
+
+\subsection{Code}
+\begin{verbatim}
+    ---
+title: "Model"
+author: "Rohen Giralt, Kaeshev Alapati, Tymur Tkachenko"
+date: "2023-02-20"
+output: html_document
+---
+
+## Libraries
+```{r}
+library(sqldf)
+library(tidyverse)
+library(tigerstats)
+library(lattice)
+library(lubridate)
+library(geojsonR)
+library(magrittr)
+```
+
+## Read in crimes data (may take a while!)
+```{r}
+crimes <- data.table::fread("data/Crimes_-_2001_to_Present.csv") # Faster than read_csv
+```
+
+```{r}
+start_date <- "2001-1-1"
+end_date <- "2022-12-31"
+df_short <- crimes %>% select(Date, "Community Area", IUCR, "FBI Code", "Primary Type", Description) # Select desired columns
+df_short <- df_short %>% rename(Community_Area = "Community Area", FBI_Code = "FBI Code", Primary_Type = "Primary Type", Secondary_Type = Description)
+df_short %<>%
+  mutate(Date = sub('.{12}$', '', df_short$Date)) %>% # idk kaeshev can u comment this
+  mutate(Date = as.Date(Date, format = "%m/%d/%Y"))
+df_short <- df_short[df_short$Date > start_date, ] # Filter desired dates
+df_short <- df_short[df_short$Date < end_date, ]
+df_short %<>%
+  mutate(Month = month(df_short$Date)) %>% # Add month column
+  mutate(Year = year(df_short$Date)) %>% # Add year column
+  mutate(DayMonth = mdy(sprintf("%d/01/%d",  Month, Year))) %>% # Add column based on month of each year (arbitrarily chosen to be first of each month)
+  select(-Year) # Remove Year column
+df_short <- as.data.frame(df_short) # Convert to data.frame (was previously data.table)
+```
+
+```{r}
+df_short_inital <- df_short
+```
+
+## Read in temperature data
+```{r}
+temperature_data <- read_csv("data/Chicago area average temperature data.csv")
+temperature_data %<>% pivot_longer(!Year, names_to = "month", values_to = "temp") %>%
+  mutate(DayMonth = mdy(sprintf("%s/01/%d",  month, Year))) %>%
+  select(temp, DayMonth)
+```
+
+## Combine datasets
+```{r}
+df_short %<>% merge(temperature_data, by="DayMonth")
+rm(temperature_data)
+```
+
+# Read Community Areas number/name mapping data
+```{r}
+community_areas <- read_csv("data/CommAreas.csv")
+community_areas %<>% select(AREA_NUMBE, COMMUNITY)
+```
+```{r}
+school_data <- read_csv("data/Chicago_Public_Schools_-_School_Profile_Information_SY1617.csv")
+school_locations <- read_csv("data/CPS_School_Locations_1617.csv")
+school_locations %<>% select(COMMAREA, School_ID)
+school_data %<>% merge(school_locations, "School_ID")
+school_data$"COMMUNITY" <- school_data$COMMAREA
+school_data %<>% merge(community_areas, "COMMUNITY")
+school_data$Community_Area <- school_data$AREA_NUMBE
+school_data %<>% select(Community_Area, Average_ACT_School, College_Enrollment_Rate_School, Student_Count_Low_Income, Student_Count_English_Learners, Student_Count_Special_Ed, Student_Count_Asian, Student_Count_Black, Student_Count_Hispanic, Student_Count_Multi, Student_Count_White, Student_Count_Total)
+```
+```{r}
+Average_ACT_Community <-                    tapply(school_data$Average_ACT_School,              school_data$Community_Area, mean, na.rm=TRUE)
+Average_College_Enrollment_Community <-     tapply(school_data$College_Enrollment_Rate_School,  school_data$Community_Area, mean, na.rm=TRUE)
+Total_Asian_Count_Community <-              tapply(school_data$Student_Count_Asian,             school_data$Community_Area, sum, na.rm=TRUE)
+Total_Black_Count_Community <-              tapply(school_data$Student_Count_Black,             school_data$Community_Area, sum, na.rm=TRUE)
+Total_Hispanic_Count_Community <-           tapply(school_data$Student_Count_Hispanic,          school_data$Community_Area, sum, na.rm=TRUE)
+Total_Multi_Count_Community <-              tapply(school_data$Student_Count_Multi,             school_data$Community_Area, sum, na.rm=TRUE)
+Total_White_Count_Community <-              tapply(school_data$Student_Count_White,             school_data$Community_Area, sum, na.rm=TRUE)
+Total_English_Learners_Count_Community <-   tapply(school_data$Student_Count_English_Learners,  school_data$Community_Area, sum, na.rm=TRUE)
+Total_Low_Income_Count_Community <-         tapply(school_data$Student_Count_Low_Income,        school_data$Community_Area, sum, na.rm=TRUE)
+Total_Student_Count_Community <-            tapply(school_data$Student_Count_Total,             school_data$Community_Area, sum, na.rm=TRUE)
+Asian_Proportion_Community              <- Total_Asian_Count_Community              / Total_Student_Count_Community
+Black_Proportion_Community              <- Total_Black_Count_Community              / Total_Student_Count_Community
+Hispanic_Proportion_Community           <- Total_Hispanic_Count_Community           / Total_Student_Count_Community
+Multi_Proportion_Community              <- Total_Multi_Count_Community              / Total_Student_Count_Community
+White_Proportion_Community              <- Total_White_Count_Community              / Total_Student_Count_Community
+English_Learners_Proportion_Community   <- Total_English_Learners_Count_Community   / Total_Student_Count_Community
+Low_Income_Proportion_Community         <- Total_Low_Income_Count_Community         / Total_Student_Count_Community
+condensed_school_data <- data.frame(Community_Area = 1:77, Average_ACT_Community, Average_College_Enrollment_Community, Total_English_Learners_Count_Community, Total_Low_Income_Count_Community)
+```
+
+```{r}
+df_short <- df_short %>% merge(condensed_school_data, "Community_Area")
+rm(community_areas, school_locations, school_data)
+rm(Average_ACT_Community, Average_College_Enrollment_Community, Total_Asian_Count_Community, Total_Low_Income_Count_Community, Total_Student_Count_Community, Asian_Proportion_Community, Black_Proportion_Community, Hispanic_Proportion_Community, Multi_Proportion_Community, English_Learners_Proportion_Community, Low_Income_Proportion_Community, Total_Black_Count_Community, Total_English_Learners_Count_Community, Total_Hispanic_Count_Community, Total_Multi_Count_Community, Total_White_Count_Community, White_Proportion_Community)
+```
+
+```{r}
+life_expectancy <- read_csv("data/Public_Health_Statistics_-_Life_Expectancy_By_Community_Area_-_Historical.csv")
+```
+
+```{r}
+housing <- read_csv("data/Affordable_Rental_Housing_Developments.csv") %>%
+  select("Community Area Number", "Property Type", Units) %>%
+  rename(Community_Area = "Community Area Number", Property_Type = "Property Type")
+```
+```{r}
+# total units of each property type, by community
+# total_units_frame <- data.frame(tapply(housing$Units, list(housing$Property_Type, housing$Community_Area), sum))
+# total_units_frame %<>%
+#   mutate(Property_Type = rownames(total_units_frame)) %>%
+#   pivot_longer(cols = !Property_Type, names_to = "Community_Area", values_to = "Total_Units_Property_Community")
+# total_units_frame %<>%
+#   mutate(Community_Area = as.numeric(str_extract(total_units_frame$Community_Area, "\\d+"))) %>%
+#   drop_na()
+total_units_frame <- housing %>%
+  group_by(Community_Area) %>%
+  summarize(
+    Total_Units=sum(Units),
+    # Total_SRO=sum(Units[housing$Property_Type == "SRO"])
+  ) %>%
+  drop_na()
+missing_comm_areas <- data.frame(
+  Community_Area = symdiff(1:77, housing$Community_Area),
+  # Property_Type = NA,
+  # Total_Units_Property_Community = rep(0, 77 - length(unique(housing$Community_Area)))
+  Total_Units = rep(0, 77 - length(unique(housing$Community_Area)))
+)
+total_units_frame <- rbind(total_units_frame, missing_comm_areas, stringsAsFactors = FALSE)
+```
+```{r}
+units_property_frame <- data.frame(Community_Area = 1:77)
+for (property_type in unique(housing$Property_Type)) {
+  filtered_housing <- housing[housing$Property_Type == property_type,]
+  factor_units_frame <- filtered_housing %>%
+    group_by(Community_Area) %>%
+    summarize(Total_Units=sum(Units)) %>%
+    drop_na()
+  factor_missing_comm_areas <- data.frame(
+    Community_Area = symdiff(1:77, filtered_housing$Community_Area),
+    Total_Units = rep(0, 77 - length(unique(filtered_housing$Community_Area)))
+  )
+  factor_units_frame <- rbind(factor_units_frame, factor_missing_comm_areas, stringsAsFactors = FALSE)
+  units_property_frame[, paste0("Total_", property_type)] <- factor_units_frame
+  # units_property_frame[property_type] <- factor_units_frame
+  # units_property_frame %<>% merge(factor_units_frame, "Community_Area")
+  # print(colnames(units_property_frame))
+}
+```
+
+```{r}
+df_short_second <- df_short
+```
+```{r}
+units_property_frame %<>% mutate(
+        Total_Multifamily = Total_Multifamily + Total_Multfamily + `Total_Multifamily/Artists`,
+        Total_NonSeniorSupportive = Total_Supportive + `Total_Supportive/HIV/AIDS` + `Total_Supportive/Kinship Families` + `Total_Supportive/Youth/Kinship Families` + `Total_Supportive/Teenage Moms` + `Total_Supportive/Veterans` + `Total_Supportive Housing` + `Total_Supportive/Males 18-24yrs.` + `Total_SRO/Supportive` + `Total_Women's Supportive` + `Total_65+/Supportive`,
+        Total_Senior = Total_Senior + `Total_Senior Supportive Living` + `Total_Senior LGBTQ` + `Total_Senior HUD 202` + `Total_65+/Supportive`,
+        Total_Artist = `Total_Artist Live/Work Space` + `Total_Artist Housing` + `Total_Artist/Family` + `Total_Artists & Families`,
+        Total_Youth = `Total_Supportive/Males 18-24yrs.` + `Total_Supportive/Teenage Moms`,
+        Total_SRO = Total_SRO + `Total_SRO/Supportive`
+) %>% select(Community_Area, Total_Multifamily, Total_NonSeniorSupportive, Total_SRO, Total_Senior, Total_Artist, Total_ARO, Total_Youth)
+```
+
+```{r}
+df_short %<>% merge(total_units_frame, "Community_Area")
+df_short %<>% merge(units_property_frame, "Community_Area")
+# df_short <- df_short %>% merge(housing, "Community_Area")
+```
+
+
+```{r}
+# df_short <- df_short %>% mutate(
+#   Senior_Housing_Count =               count(lapply(Property_Type, grepl, "Senior", fixed = TRUE)), # `grepl` is basically `contains`
+#   ARO_Housing_Count =                  count(lapply(Property_Type, grepl, "ARO", fixed = TRUE)),
+#   Intergenerational_Housing_Count =    count(lapply(Property_Type, grepl, "Inter-generational", fixed = TRUE)),
+#   Multifamily_Housing_Count =          count(lapply(Property_Type, grepl, "Multifamily", fixed = TRUE)),
+#   Supportive_Housing_Count =           count(lapply(Property_Type, grepl, "Supportive", fixed = TRUE)),
+#   SRO_Housing_Count =                  count(lapply(Property_Type, grepl, "SRO", fixed = TRUE)),
+#   Artist_Housing_Count =               count(lapply(Property_Type, grepl, "Artist", fixed = TRUE)),
+# )
+```
+
+# costs
+```{r}
+crime_costs_prim_match <- read_csv("data/Crime Costs (Primary Type Matched).csv") # Crime costs for crimes indexed by their Primary Type
+crime_costs_IUCR_match <- read_csv("data/Crime Costs (IUCR Matched).csv") # Crime costs for crimes indexed by IUCRs
+crime_costs_IUCR_match$IUCR %<>% as.character()
+df_short %<>%
+  merge(crime_costs_prim_match, by="Primary_Type", all = TRUE) %>%
+  merge(crime_costs_IUCR_match, by="IUCR", all = TRUE)
+# Get rid of duplicates...
+df_short %<>% mutate(
+  Crime_Career_Cost =               coalesce(df_short$`Crime Victim Cost.x`,               df_short$`Crime Victim Cost.y`),
+  Criminal_Justice_System_Cost =    coalesce(df_short$`Criminal Justice System Cost.x`,    df_short$`Criminal Justice System Cost.y`),
+  Crime_Career_Cost =               coalesce(df_short$`Crime Career Cost.x`,               df_short$`Crime Career Cost.y`),
+  Total_Tangible_Cost =             coalesce(df_short$`Total Tangible Cost.x`,             df_short$`Total Tangible Cost.y`),
+  Pain_And_Suffering_Cost =         coalesce(df_short$`Pain and Suffering Cost.x`,         df_short$`Pain and Suffering Cost.y`),
+  Risk_Of_Homicide_Cost =           coalesce(df_short$`Corrected Risk-of-Homicide Cost.x`, df_short$`Corrected Risk-of-Homicide Cost.y`),
+  Total_Intangible_Cost =           coalesce(df_short$`Total Intangible Cost.x`,           df_short$`Total Intangible Cost.y`),
+  Total_Total_Cost =                coalesce(df_short$`Total Total Cost.x`,                df_short$`Total Total Cost.y`),
+  Total_Included_Cost =             coalesce(df_short$`Total Included Cost.x`,             df_short$`Total Included Cost.y`)
+) %>%
+  select(-c(`Crime Victim Cost.x`, `Crime Victim Cost.y`, `Criminal Justice System Cost.x`, `Criminal Justice System Cost.y`, `Crime Career Cost.x`, `Crime Career Cost.y`, `Total Tangible Cost.x`, `Total Tangible Cost.y`, `Pain and Suffering Cost.x`, `Pain and Suffering Cost.y`, `Corrected Risk-of-Homicide Cost.x`, `Corrected Risk-of-Homicide Cost.y`, `Total Intangible Cost.x`, `Total Intangible Cost.y`, `Total Total Cost.x`, `Total Total Cost.y`, `Total Included Cost.x`, `Total Included Cost.y`))
+df_short <- df_short[!is.na(df_short$Total_Included_Cost),] # Remove ignored crimes (~15.54% of dataset)
+```
+
+```{r}
+housing_economics <- data.table::fread("data/Census_Data_-_Selected_socioeconomic_indicators_in_Chicago__2008___2012.csv")
+housing_economics %<>% filter(!is.na(`Community Area Number`))
+housing_economics %<>% rename(Community_Area = `Community Area Number`, Hardship_Index = `HARDSHIP INDEX`, Per_Capita_Income = `PER CAPITA INCOME`, Percent_Crowded = `PERCENT OF HOUSING CROWDED`)
+housing_economics %<>% select(Community_Area, Hardship_Index, Per_Capita_Income, Percent_Crowded)
+```
+
+```{r}
+df_short %<>% merge(housing_economics, "Community_Area")
+```
+
+# save
+```{r}
+save(df_short, file = "data/df_short.Rdata")
+```
+
+# Models
+# New
+## Get data
+```{r}
+parsed_data <- df_short %>% count(Total_Units, Total_ARO, Total_Artist, Total_Senior, Total_NonSeniorSupportive, Total_Multifamily, Total_SRO, Per_Capita_Income, Hardship_Index)
+# parsed_data <- df_short %>% count(Total_Units, "Total_Multifamily/Artists", Total_Multifamily, Total_Multfamily, "Total_Supportive/Males 18-24yrs.", "Total_People with Disabilities", Total_Senior, Total_ARO, "Total_Supportive Housing", "Total_Senior HUD 202", "Total_Supportive/Veterans", "Total_Senior Supportive Living", "Total_Artists & Families", "Total_Inter-generational", Total_SRO, Total_Supportive, Total_Seniors, "Total_Artist/Family", "Total_Supportive/Teenage Moms", "Total_Supportive/Youth/Kinship Families", Total_Veterans, "Total_Artist Housing", "Total_65+/Supportive", "Total_Disabled/Homeless", "Total_Supportive/Kinship Families", "Total_Artist Live/Work Space", "Total_SRO/Supportive", "Total_Senior LGBTQ", "Total_Supportive/HIV/AIDS", "Total_Women's Supportive")
+```
+```{r}
+parsed_data_costs <- aggregate(
+        Total_Included_Cost ~
+        Total_Units +
+        Total_ARO +
+        Total_Artist +
+        Total_Senior +
+        Total_NonSeniorSupportive +
+        Total_Multifamily +
+        Total_SRO +
+        # Total_Youth +
+        Per_Capita_Income +
+        Hardship_Index +
+        Percent_Crowded +
+        Average_ACT_Community.x +
+        temp.x
+, data = df_short, FUN=sum)
+```
+
+## Model
+```{r}
+n_model <- lm(n ~
+              Total_Units +
+              # Total_ARO +
+              # Total_Artist +
+              # Total_Senior +
+              Total_NonSeniorSupportive +
+              Total_Multifamily +
+              Total_SRO,
+            ,data = parsed_data)
+# print(summary(n_model))
+n_model <- lm(n ~
+                         Hardship_Index*Total_Units +
+                                 Hardship_Index*Total_ARO +
+                                 # Hardship_Index*Total_Artist +
+                                 # Hardship_Index*Total_Senior +
+                                 Hardship_Index*Total_NonSeniorSupportive +
+                                 # Hardship_Index*Total_Multifamily +
+                                 Hardship_Index*Total_SRO +
+                                 # Per_Capita_Income +
+                                 Hardship_Index
+                 # Average_ACT_Community.x +
+                 # temp.x
+        ,data = parsed_data)
+print(summary(n_model))
+cost_model1 <- lm(Total_Included_Cost ~
+                   Total_Units +
+                   Total_ARO +
+                   Total_Artist +
+                   Total_Senior +
+                   Total_NonSeniorSupportive +
+                   Total_Multifamily +
+                   Total_SRO +
+                   Percent_Crowded +
+                   Per_Capita_Income +
+                   Hardship_Index,
+                   # Average_ACT_Community.x +
+                   #   temp.x
+             ,data = parsed_data_costs)
+print(summary(cost_model1))
+cost_model <- lm(Total_Included_Cost ~
+                         Hardship_Index*Total_Units +
+                         Hardship_Index*Total_ARO +
+                         # Hardship_Index*Total_Artist +
+                         # Hardship_Index*Total_Senior +
+                         # Hardship_Index*Total_NonSeniorSupportive +
+                         # Hardship_Index*Total_Multifamily +
+                         Hardship_Index*Total_SRO +
+                         # Per_Capita_Income +
+                         Hardship_Index
+                         # Average_ACT_Community.x +
+                         # temp.x
+        ,data = parsed_data_costs)
+print(summary(cost_model))
+print(summary(lm(Total_Included_Cost ~ Hardship_Index, data = parsed_data_costs)))
+irrelevant_model <- lm(Total_Included_Cost ~ Hardship_Index*Total_Artist, data = parsed_data_costs)
+print(summary(irrelevant_model))
+irrelevant_model2 <- lm(Total_Included_Cost ~ Hardship_Index*Total_Senior, data = parsed_data_costs)
+print(summary(irrelevant_model2))
+ggplot(parsed_data_costs, aes(x = Total_Units, y = Total_Included_Cost)) +
+        geom_point() +
+        geom_smooth(method = "lm")
+```
+# Old
+## Get data
+```{r}
+parsed_data <- df_short %>% count(temp, DayMonth, Community_Area, Average_ACT_Community, Average_College_Enrollment_Community, Asian_Proportion_Community, Black_Proportion_Community, Hispanic_Proportion_Community, Multi_Proportion_Community, White_Proportion_Community, English_Learners_Proportion_Community, Low_Income_Proportion_Community, Total_Asian_Count_Community, Total_Black_Count_Community, Total_Hispanic_Count_Community, Total_Multi_Count_Community, Total_White_Count_Community, Total_English_Learners_Count_Community, Total_Low_Income_Count_Community, Total_Student_Count_Community, Property_Type, Total_Units_Property_Community)
+```
+Dummies
+```{r}
+parsed_data <- parsed_data %>% mutate(
+  housing_is_Senior =               as.vector(lapply(Property_Type, grepl, "Senior", fixed = TRUE), mode = "logical"), # `grepl` is basically `contains`
+  housing_is_ARO =                  as.vector(lapply(Property_Type, grepl, "ARO", fixed = TRUE), mode = "logical"),
+  housing_is_Intergenerational =    as.vector(lapply(Property_Type, grepl, "Inter-generational", fixed = TRUE), mode = "logical"),
+  housing_is_Multifamily =          as.vector(lapply(Property_Type, grepl, "Multifamily", fixed = TRUE), mode = "logical"),
+  housing_is_Supportive =           as.vector(lapply(Property_Type, grepl, "Supportive", fixed = TRUE), mode = "logical"),
+  housing_is_SRO =                  as.vector(lapply(Property_Type, grepl, "SRO", fixed = TRUE), mode = "logical"),
+  housing_is_Artist =               as.vector(lapply(Property_Type, grepl, "Artist", fixed = TRUE), mode = "logical"),
+)
+```
+
+```
+## Model
+```{r}
+# factors <- c(
+#   parsed_data$Average_ACT_Community,
+#   parsed_data$Average_College_Enrollment_Community,
+#   parsed_data$Total_Asian_Count_Community,
+#   parsed_data$Total_Black_Count_Community,
+#   parsed_data$Total_Hispanic_Count_Community,
+#   parsed_data$Total_Multi_Count_Community,
+#   parsed_data$Total_White_Count_Community,
+#   parsed_data$Total_Low_Income_Count_Community,
+#   parsed_data$Total_English_Learners_Count_Community,
+#   # Total_Student_Count_Community
+#   parsed_data$temp
+# )
+model <- lm(
+  n ~
+  Average_ACT_Community +
+  # Average_College_Enrollment_Community +
+  Total_Asian_Count_Community +
+  Total_Black_Count_Community +
+  # Total_Hispanic_Count_Community +
+  Total_Multi_Count_Community +
+  Total_White_Count_Community +
+  Total_Low_Income_Count_Community +
+  Total_English_Learners_Count_Community +
+  Total_Units_Property_Community * housing_is_Senior + # wait this is not the right way to do this
+  Total_Units_Property_Community * housing_is_ARO +
+  Total_Units_Property_Community * housing_is_Intergenerational +
+  Total_Units_Property_Community * housing_is_Multifamily +
+  Total_Units_Property_Community * housing_is_Supportive +
+  Total_Units_Property_Community * housing_is_SRO +
+  Total_Units_Property_Community * housing_is_Artist +
+  # Total_Student_Count_Community +
+  temp,
+  data = parsed_data)
+print(summary(model))
+# model2 <- lm(
+#   log(n) ~
+#     log(Total_Black_Count_Community) +
+#       log(Total_Student_Count_Community)
+#       log(Total_Low_Income_Count_Community) + temp,
+#   data = parsed_data
+# )
+print(summary(model2))
+ggplot(parsed_data, aes(x = log(Total_Black_Count_Community), y = log(n))) +
+  geom_point() +
+  geom_smooth(method = "lm")
+# print(summary(lm(log(n) ~ log(Total_Student_Count_Community), data = parsed_data)))
+# print(summary(lm(n ~ log(Total_Student_Count_Community), data = parsed_data)))
+# print(summary(lm(n ~ Total_Student_Count_Community, data = parsed_data)))
+# ggplot(parsed_data, aes(x = log(Total_Student_Count_Community), y = log(n))) +
+#         geom_point() +
+#         geom_smooth(method = "lm")
+#
+# ggplot(parsed_data, aes(x = log(Total_Student_Count_Community), y = (n))) +
+#         geom_point() +
+#         geom_smooth(method = "lm")
+#
+# ggplot(parsed_data, aes(x = (Total_Student_Count_Community), y = (n))) +
+#         geom_point() +
+#         geom_smooth(method = "lm")
+# for (factor in factor) {
+#     ggplot(parsed_data, aes(x = factor, y = n)) +
+#         geom_point() +
+#         geom_smooth(method = "lm")
+# }
+```
+\end{verbatim}
+
+\end{document}
